@@ -1,0 +1,9 @@
+{
+    "boringVault": "",
+    "manager": "",
+    "accountant": "",
+    "teller": "",
+    "rolesAuthority": "",
+    "freezeListBeforeTransferHook": "",
+    "genericDecoderAndSanitizer": ""
+}

@@ -1,0 +1,49 @@
+boring-vault
+Copyright (c) Theoriq AI and contributors.
+
+This product is a derivative work and is distributed under the GNU Affero
+General Public License v3.0 (AGPL-3.0). See the LICENSE file for the full text.
+
+================================================================================
+Upstream attribution
+================================================================================
+
+This repository is derived from:
+
+  * Veda Labs / Se7en Seas — original BoringVault architecture
+    https://github.com/Se7en-Seas/boring-vault
+
+  * Paxos Labs — Nucleus BoringVault
+
+It is an independent derivative maintained by Theoriq AI, and is not affiliated
+with nor endorsed by the upstream projects.
+
+================================================================================
+Third-party components incorporated by this work
+================================================================================
+
+The following dependencies are incorporated (by import/inheritance) into the
+contracts in this repository. Their copyright and license notices are retained
+in the corresponding source files; the licenses below are reproduced or
+referenced as required.
+
+  * solmate (transmissions11/solmate) .................... AGPL-3.0-only
+  * OpenZeppelin Contracts ............................... MIT
+  * Uniswap v3-core (interfaces, SafeCast) ............... GPL-2.0-or-later
+  * Aave v3-core (interfaces) ............................ AGPL-3.0
+  * LayerZero (OApp/OFT base contracts, interfaces) ...... MIT
+
+In addition, the first-party source files in this repository carry their own
+per-file SPDX identifiers (MIT, Apache-2.0, GPL-2.0-or-later, GPL-3.0-or-later,
+AGPL-3.0). Those identifiers are authoritative for each file and are preserved.
+
+Apache-2.0 components: this NOTICE file is provided to satisfy Section 4(d) of
+the Apache License, Version 2.0. A copy of the Apache License is available at
+http://www.apache.org/licenses/LICENSE-2.0
+
+================================================================================
+Excluded components
+================================================================================
+
+Source-available (BUSL-1.1) and unlicensed third-party components present in the
+upstream work have been excluded from this repository and are not distributed.

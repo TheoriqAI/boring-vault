@@ -1,0 +1,26 @@
+# Compiler files
+cache/
+out/
+broadcast/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+
+*.DS_Store
+broadcast/*
+
+# Bun
+node_modules/
+
+.vscode
+
+# Excluded BUSL-1.1 source (kept locally, must NOT be distributed)
+/excluded-busl/

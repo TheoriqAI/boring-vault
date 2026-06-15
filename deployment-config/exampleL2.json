@@ -1,0 +1,59 @@
+{
+  "base":"0x160345fC359604fC6e70E3c5fAcbdE5F7A9342d8",
+  "protocolAdmin": "0xF2dE1311C5b2C1BD94de996DA13F80010453e505",
+  "boringVaultAndBaseDecimals": "18",
+  "boringVault": {
+    "boringVaultSalt": "0x88ebd3298c1ad6afea488ed29af3b9cc4ed8b20e6b729e465705221d472587ca",
+    "boringVaultName": "Nucleus Vault",
+    "boringVaultSymbol": "NV",
+    "address": "0x0000000000E7Ab44153eEBEF2343ba5289F65dAC"
+  },
+  "freezeListBeforeTransferHook": {"address": "0x0000000000000000000000000000000000000000"},
+  "manager": {
+    "managerSalt": "0xae6187a622d9193caa52172f133562cdb86ec3f29cf01000f3d4e0369ca1b11c",
+    "address": "0x0000000000fAd6Db23abdC1a85621B97bd1Dc82f"
+  },
+  "accountant": {
+    "accountantSalt": "0x491975ba445d886bff330e1f5274d66a09b9eff95c05694e68b99c3c8674ce9e",
+    "payoutAddress": "0x0000000000417626Ef34D62C4DC189b021603f2F",
+    "allowedExchangeRateChangeUpper": "10003",
+    "allowedExchangeRateChangeLower": "9998",
+    "minimumUpdateDelayInSeconds": "3600",
+    "managementFee": "2000",
+    "address": "0x00000000004F96C07B83e86600D86F9479bB43fa"
+  },
+  "teller": {
+    "tellerSalt": "0xcdef4c14f34dd7f1f574eeebebb30e482a3e8239ad81fd8a837d74f412ad02df",
+    "maxGasForPeer": 100000,
+    "minGasForPeer": 0,
+    "peerEid": 30280,
+    "tellerContractName": "TellerWithMultiAssetSupport",
+    "assets": [],
+    "dvnIfNoDefault": {
+      "required": [
+        "0x6788f52439aca6bff597d3eec2dc9a44b8fee842"
+      ],
+      "optional": [
+        "0x1feb08b1a53a9710afce82d380b8c2833c69a37e",
+        "0x87048402c32632b7c4d0a892d82bc1160e8b2393",
+        "0xd24972c11f91c1bb9eaee97ec96bb9c33cf7af24",
+        "0xbd00c87850416db0995ef8030b104f875e1bdd15"
+      ],
+      "blockConfirmationsRequiredIfNoDefault": 15,
+      "optionalThreshold": 1
+    },
+    "address": "0x00000000004F96C07B83e86600D86F0000000000"
+  },
+  "rolesAuthority": {
+    "rolesAuthoritySalt": "0x7598c70512b3444455ffe66016c7f5115daf8de620d34311c8834fab14c689b7",
+    "strategist": "0x00000000004F96C07B83e86600D86F0000000000",
+    "exchangeRateBot": "0x1755397BEc366a1e1160d8aE0106C60E7e344B56",
+    "solver": "0x54563d1DdB55b029D6D7AcD89C633af746823092",
+    "address": "0x00000000004F96C07B83e86600D86F0000000000"
+  },
+  "distributorCodeDepositor": {
+    "deploy": false,
+    "distributorCodeDepositorSalt": "0x48b53893da2e0b0248268c00000000000000000000000000000000000000001d",
+    "nativeSupported": false
+  }
+}
