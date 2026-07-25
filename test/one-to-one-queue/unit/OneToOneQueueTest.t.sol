@@ -566,7 +566,6 @@ contract OneToOneQueueTest is OneToOneQueueTestBase {
         queue.submitOrder(_createSubmitOrderParams(1e6, offerAsset, wantAsset, alice, alice, alice, params));
 
         {
-
             sigHash = keccak256(
                 abi.encode(
                     1e6,

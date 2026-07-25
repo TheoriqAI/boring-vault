@@ -105,6 +105,13 @@ abstract contract BaseScript is Script {
     }
 
     function getMultisig() internal returns (address) {
+        // TEST/CUSTOM-OWNER ESCAPE HATCH: when OVERRIDE_PROTOCOL_ADMIN is set in the environment, use it
+        // as the protocol admin on ANY chain. Defaults to address(0) (disabled), so production deploys
+        // are unaffected and continue to use the hardcoded per-chain multisigs below. Only intended for
+        // deploying custom-owner test vaults (e.g. test-1-xaut).
+        address overrideAdmin = vm.envOr("OVERRIDE_PROTOCOL_ADMIN", address(0));
+        if (overrideAdmin != address(0)) return overrideAdmin;
+
         if (block.chainid == 1) {
             return 0x0000000000417626Ef34D62C4DC189b021603f2F;
         } else if (block.chainid == 1329) {
@@ -127,6 +134,9 @@ abstract contract BaseScript is Script {
             return 0xE5a5F3A6C88B894710992e1C2626be0DEB99566E;
         } else if (block.chainid == 10) {
             return 0x124A134C0A60FdA03f594C641F8D7d44D4c6d6d3;
+        } else if (block.chainid == 42_220) {
+            // Celo. TODO: replace with the real Celo protocol-admin Safe before a live broadcast.
+            return 0x0000000000417626Ef34D62C4DC189b021603f2F;
         } else {
             revert("Base Script getMultisig: bad chain id");
         }

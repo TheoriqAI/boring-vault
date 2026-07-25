@@ -165,8 +165,8 @@ contract DecoderCustomTypes {
         uint256 guessOffchain; // pass 0 in to skip this variable
         uint256 maxIteration; // every iteration, the diff between guessMin and guessMax will be divided by 2
         uint256 eps; // the max eps between the returned result & the correct result, base 1e18. Normally this number
-        // will be set
-        // to 1e15 (1e18/1000 = 0.1%)
+            // will be set
+            // to 1e15 (1e18/1000 = 0.1%)
     }
 
     struct SwapData {
@@ -313,6 +313,7 @@ contract DecoderCustomTypes {
         Borrow, // increase position debt
         AddToken, // upsert collateral asset to position storage
         RemoveToken // remove collateral asset from position storage
+
     }
 
     /// @title Action
@@ -354,6 +355,94 @@ contract DecoderCustomTypes {
         address[] signerAddresses;
         // the signatures of the operators that have signed the task
         bytes[] signatures;
+    }
+
+    // ========================================= KYBERSWAP =========================================
+    // MetaAggregationRouterV2 (mainnet 0x6131B5fae19EA4f9D964eAc0408E4408b66337b5). Field order/types
+    // are authoritative from the verified source and MUST match byte-for-byte (they determine the
+    // function selector the decoder is matched against).
+
+    struct KyberSwapDescriptionV2 {
+        address srcToken;
+        address dstToken;
+        address[] srcReceivers;
+        uint256[] srcAmounts;
+        address[] feeReceivers;
+        uint256[] feeAmounts;
+        address dstReceiver;
+        uint256 amount;
+        uint256 minReturnAmount;
+        uint256 flags;
+        bytes permit;
+    }
+
+    struct KyberSwapExecutionParams {
+        address callTarget;
+        address approveTarget;
+        bytes targetData;
+        KyberSwapDescriptionV2 desc;
+        bytes clientData;
+    }
+
+    // ========================================= OKX DEX =========================================
+    // DexRouter (mainnet 0x6088d94C5A40CecD3Ae2d4E0710Ca687b91C61d0). NOTE: `fromToken` fields are
+    // uint256, not address — the token address occupies the low 160 bits and flags occupy the high
+    // bits. The repo's src/interfaces/IOKXRouter.sol declares smartSwapTo's last arg as `bytes[]`,
+    // but the deployed router uses `OKXPMMSwapRequest[]` below; using the wrong type yields the wrong
+    // selector, so the decoder uses these (verified) shapes.
+
+    struct OKXBaseRequest {
+        uint256 fromToken;
+        address toToken;
+        uint256 fromTokenAmount;
+        uint256 minReturnAmount;
+        uint256 deadLine;
+    }
+
+    struct OKXRouterPath {
+        address[] mixAdapters;
+        address[] assetTo;
+        uint256[] rawData;
+        bytes[] extraData;
+        uint256 fromToken;
+    }
+
+    struct OKXPMMSwapRequest {
+        uint256 pathIndex;
+        address payer;
+        address fromToken;
+        address toToken;
+        uint256 fromTokenAmountMax;
+        uint256 toTokenAmountMax;
+        uint256 salt;
+        uint256 deadLine;
+        bool isPushOrder;
+        bytes extension;
+    }
+
+    // ========================================= ODOS =========================================
+    // OdosRouterV2 (mainnet 0xCf5540fFFCdC3d510B18bFcA6d2b9987b0772559).
+
+    struct OdosSwapTokenInfo {
+        address inputToken;
+        uint256 inputAmount;
+        address inputReceiver;
+        address outputToken;
+        uint256 outputQuote;
+        uint256 outputMin;
+        address outputReceiver;
+    }
+
+    struct OdosInputTokenInfo {
+        address tokenAddress;
+        uint256 amountIn;
+        address receiver;
+    }
+
+    struct OdosOutputTokenInfo {
+        address tokenAddress;
+        uint256 relativeValue;
+        address receiver;
     }
 
 }

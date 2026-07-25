@@ -377,8 +377,8 @@ contract AccountantWithRateProviders is Auth, IRateProvider {
             if (newExchangeRate > state.highestExchangeRate) {
                 unchecked {
                     if (state.performanceFee > 0) {
-                        uint256 changeInAssets = uint256(newExchangeRate - state.highestExchangeRate)
-                            .mulDivDown(shareSupplyToUse, ONE_SHARE);
+                        uint256 changeInAssets =
+                            uint256(newExchangeRate - state.highestExchangeRate).mulDivDown(shareSupplyToUse, ONE_SHARE);
                         uint256 performanceFees = changeInAssets.mulDivDown(state.performanceFee, 1e4);
                         newFeesOwedInBase += performanceFees;
                         emit PerformanceFeesAccrued(performanceFees);

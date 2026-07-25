@@ -102,4 +102,3 @@ interface Authority {
         returns (bool, string memory);
 
 }
-

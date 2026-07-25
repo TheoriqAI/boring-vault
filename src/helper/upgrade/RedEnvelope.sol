@@ -159,8 +159,14 @@ contract RedEnvelopeUpgrade {
         {
             // First fetch the configuration values from the accountant being replaced
             (
-                address _payoutAddress,,,
-                uint96 _exchangeRate,,,,,
+                address _payoutAddress,
+                ,
+                ,
+                uint96 _exchangeRate,
+                ,
+                ,
+                ,
+                ,
                 uint32 _minimumUpdateDelayInSeconds,
                 uint16 _managementFee
             ) = IAccountant1(address(params.accountant1)).accountantState();
@@ -193,26 +199,23 @@ contract RedEnvelopeUpgrade {
         deployedContracts.accountant2.setAuthority(params.authority);
 
         // Set the Role Capabilities for the new accountant
-        params.authority
-            .setRoleCapability(
-                UPDATE_EXCHANGE_RATE_ROLE,
-                address(deployedContracts.accountant2),
-                IAccountantWithRateProviders.updateExchangeRate.selector,
-                true
-            );
-        params.authority
-            .setRoleCapability(
-                PAUSER_ROLE, address(deployedContracts.accountant2), IAccountantWithRateProviders.pause.selector, true
-            );
+        params.authority.setRoleCapability(
+            UPDATE_EXCHANGE_RATE_ROLE,
+            address(deployedContracts.accountant2),
+            IAccountantWithRateProviders.updateExchangeRate.selector,
+            true
+        );
+        params.authority.setRoleCapability(
+            PAUSER_ROLE, address(deployedContracts.accountant2), IAccountantWithRateProviders.pause.selector, true
+        );
 
         // Deploy the Teller
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         // NOTE: We set the owner to this flash-upgrade contract for now.
         // Also this contract does not deploy a regular teller, but a MultiChainLayerZeroTellerWithMultiAssetSupport.
         // And thus it's constructor arg contains the LayerZero endpoint.
-        bytes memory teller2ConstructorParams = abi.encode(
-            address(this), params.teller1.vault(), address(deployedContracts.accountant2), layerZeroEndpoint
-        );
+        bytes memory teller2ConstructorParams =
+            abi.encode(address(this), params.teller1.vault(), address(deployedContracts.accountant2), layerZeroEndpoint);
         deployedContracts.teller2 = ITellerWithMultiAssetSupport(
             CREATEX.deployCreate3(
                 _makeSalt(false, params.teller1.vault().symbol(), "TellerRedEnvelope"),
@@ -244,28 +247,21 @@ contract RedEnvelopeUpgrade {
         }
 
         // Set the Role Capabilities for the new Teller
-        params.authority
-            .setRoleCapability(
-                DEPOSITOR_ROLE, address(deployedContracts.teller2), ITellerWithMultiAssetSupport.deposit.selector, true
-            );
-        params.authority
-            .setRoleCapability(
-                DEPOSITOR_ROLE,
-                address(deployedContracts.teller2),
-                ITellerWithMultiAssetSupport.depositWithPermit.selector,
-                true
-            );
-        params.authority
-            .setRoleCapability(
-                PAUSER_ROLE, address(deployedContracts.teller2), ITellerWithMultiAssetSupport.pause.selector, true
-            );
-        params.authority
-            .setRoleCapability(
-                SOLVER_ROLE,
-                address(deployedContracts.teller2),
-                ITellerWithMultiAssetSupport.bulkWithdraw.selector,
-                true
-            );
+        params.authority.setRoleCapability(
+            DEPOSITOR_ROLE, address(deployedContracts.teller2), ITellerWithMultiAssetSupport.deposit.selector, true
+        );
+        params.authority.setRoleCapability(
+            DEPOSITOR_ROLE,
+            address(deployedContracts.teller2),
+            ITellerWithMultiAssetSupport.depositWithPermit.selector,
+            true
+        );
+        params.authority.setRoleCapability(
+            PAUSER_ROLE, address(deployedContracts.teller2), ITellerWithMultiAssetSupport.pause.selector, true
+        );
+        params.authority.setRoleCapability(
+            SOLVER_ROLE, address(deployedContracts.teller2), ITellerWithMultiAssetSupport.bulkWithdraw.selector, true
+        );
         // Grant the TELLER ROLE to the teller2 contract
         params.authority.setUserRole(address(deployedContracts.teller2), TELLER_ROLE, true);
 
@@ -285,12 +281,12 @@ contract RedEnvelopeUpgrade {
         emit ContractDeployed(CONTRACT.DCD2, address(deployedContracts.dcd2));
 
         // Set public capabilities for the distributor code depositor
-        params.authority
-            .setPublicCapability(address(deployedContracts.dcd2), IDistributorCodeDepositor.deposit.selector, true);
-        params.authority
-            .setPublicCapability(
-                address(deployedContracts.dcd2), IDistributorCodeDepositor.depositWithPermit.selector, true
-            );
+        params.authority.setPublicCapability(
+            address(deployedContracts.dcd2), IDistributorCodeDepositor.deposit.selector, true
+        );
+        params.authority.setPublicCapability(
+            address(deployedContracts.dcd2), IDistributorCodeDepositor.depositWithPermit.selector, true
+        );
 
         // Grant the DEPOSITOR ROLE to the distributor code depositor
         params.authority.setUserRole(address(deployedContracts.dcd2), DEPOSITOR_ROLE, true);
@@ -332,27 +328,27 @@ contract RedEnvelopeUpgrade {
         deployedContracts.withdrawQueue.setAuthority(params.authority);
 
         // Set the Role Capabilities for the new withdraw queue
-        params.authority
-            .setRoleCapability(
-                WITHDRAW_QUEUE_PROCESSOR_ROLE,
-                address(deployedContracts.withdrawQueue),
-                IWithdrawQueue.processOrders.selector,
-                true
-            );
+        params.authority.setRoleCapability(
+            WITHDRAW_QUEUE_PROCESSOR_ROLE,
+            address(deployedContracts.withdrawQueue),
+            IWithdrawQueue.processOrders.selector,
+            true
+        );
 
         // Grant the processor role to the processor address
         params.authority.setUserRole(params.withdrawQueueProcessorAddress, WITHDRAW_QUEUE_PROCESSOR_ROLE, true);
         params.authority.setUserRole(address(deployedContracts.withdrawQueue), SOLVER_ROLE, true);
 
         // Grant public capabilities to the withdraw queue
-        params.authority
-            .setPublicCapability(address(deployedContracts.withdrawQueue), IWithdrawQueue.submitOrder.selector, true);
-        params.authority
-            .setPublicCapability(address(deployedContracts.withdrawQueue), IWithdrawQueue.cancelOrder.selector, true);
-        params.authority
-            .setPublicCapability(
-                address(deployedContracts.withdrawQueue), IWithdrawQueue.cancelOrderWithSignature.selector, true
-            );
+        params.authority.setPublicCapability(
+            address(deployedContracts.withdrawQueue), IWithdrawQueue.submitOrder.selector, true
+        );
+        params.authority.setPublicCapability(
+            address(deployedContracts.withdrawQueue), IWithdrawQueue.cancelOrder.selector, true
+        );
+        params.authority.setPublicCapability(
+            address(deployedContracts.withdrawQueue), IWithdrawQueue.cancelOrderWithSignature.selector, true
+        );
 
         // Return the ownership of the contracts
         // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+

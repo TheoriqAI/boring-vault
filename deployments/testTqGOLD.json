@@ -1,0 +1,36 @@
+{
+  "name": "testTqGOLD",
+  "note": "All contract addresses are IDENTICAL on every chain (CREATE3 via CreateX: address depends only on deployer + salt, not bytecode or chain). Source of truth = broadcast/deployAll.s.sol/<chainId>/run-latest.json.",
+  "deployer": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+  "owner_protocolAdmin_strategist_bot": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+  "createX": "0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed",
+  "contracts": {
+    "BoringVault": "0xe57fed993cee96c73ec7b2bc02dcd2407d52edb7",
+    "FreezeListBeforeTransferHook": "0xd6c7d0df8d333682e52b88bf228bf7d6e1cef35d",
+    "ManagerWithMerkleVerification": "0xbd60d2e1e8ddd41cef96252389766df4c6d72123",
+    "AccountantWithRateProviders": "0x1ea1255e1142d443e8e45f440b6ad2464329d2af",
+    "MultiChainLayerZeroTellerWithMultiAssetSupport": "0x19b7e216a8f8c1cb76e2b181f4f9a5856a87ed3a",
+    "RolesAuthority": "0x99ef6af10cf53cce3c0007f9ffa2fe3d5498449e",
+    "WithdrawQueueAssetSpecificFeeModule": "0x9141b63703b476197efafa0d3edec48d59d3804e",
+    "WithdrawQueue": "0x386fa78c76632f627caa08e338d7b5a83a25f2bd",
+    "GenericDecoderAndSanitizer": "0x7c70ddb9306f9e2f7a56b6fe7497b7c9ccd5502c"
+  },
+  "chains": {
+    "1": {
+      "name": "Ethereum",
+      "baseAsset": { "symbol": "XAUT", "address": "0x68749665FF8D2d112Fa859AA293F07A622782F38", "decimals": 6 },
+      "lzEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+      "lzEid": 30101,
+      "peerEid": 30125,
+      "explorer": "https://etherscan.io"
+    },
+    "42220": {
+      "name": "Celo",
+      "baseAsset": { "symbol": "XAUt0", "address": "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff", "decimals": 6 },
+      "lzEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+      "lzEid": 30125,
+      "peerEid": 30101,
+      "explorer": "https://celoscan.io"
+    }
+  }
+}

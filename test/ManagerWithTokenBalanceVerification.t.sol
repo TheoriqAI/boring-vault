@@ -172,31 +172,29 @@ contract ManagerWithTokenBalanceVerificationTest is Test, MainnetAddresses {
 
         deal(address(USDT), address(boringVault), 777);
 
-        (bool success,) = address(manager)
-            .call(
-                abi.encodeWithSelector(
-                    ManagerWithTokenBalanceVerification.manageVaultWithTokenBalanceVerification.selector,
-                    boringVault,
-                    targets,
-                    data,
-                    values,
-                    tokensForVerification,
-                    allowableTokenDelta
-                )
-            );
+        (bool success,) = address(manager).call(
+            abi.encodeWithSelector(
+                ManagerWithTokenBalanceVerification.manageVaultWithTokenBalanceVerification.selector,
+                boringVault,
+                targets,
+                data,
+                values,
+                tokensForVerification,
+                allowableTokenDelta
+            )
+        );
         assertFalse(
             success, "non-owner should never be able to successfully call manageVaultWithTokenBalanceVerification"
         );
-        (success,) = address(manager)
-            .call(
-                abi.encodeWithSelector(
-                    ManagerWithTokenBalanceVerification.manageVaultWithNoVerification.selector,
-                    boringVault,
-                    targets,
-                    data,
-                    values
-                )
-            );
+        (success,) = address(manager).call(
+            abi.encodeWithSelector(
+                ManagerWithTokenBalanceVerification.manageVaultWithNoVerification.selector,
+                boringVault,
+                targets,
+                data,
+                values
+            )
+        );
         assertFalse(success, "non-owner should never be able to successfully call manageVaultWithNoVerification");
 
         vm.stopPrank();
@@ -206,31 +204,29 @@ contract ManagerWithTokenBalanceVerificationTest is Test, MainnetAddresses {
         vm.startPrank(caller);
 
         data[1] = abi.encodeWithSelector(ERC20.approve.selector, usdtTo, 0);
-        (success,) = address(manager)
-            .call(
-                abi.encodeWithSelector(
-                    ManagerWithTokenBalanceVerification.manageVaultWithTokenBalanceVerification.selector,
-                    boringVault,
-                    targets,
-                    data,
-                    values,
-                    tokensForVerification,
-                    allowableTokenDelta
-                )
-            );
+        (success,) = address(manager).call(
+            abi.encodeWithSelector(
+                ManagerWithTokenBalanceVerification.manageVaultWithTokenBalanceVerification.selector,
+                boringVault,
+                targets,
+                data,
+                values,
+                tokensForVerification,
+                allowableTokenDelta
+            )
+        );
         assertTrue(success, "owner should always be able to successfully call manageVaultWithTokenBalanceVerification");
 
         data[1] = abi.encodeWithSelector(ERC20.approve.selector, usdtTo, 777);
-        (success,) = address(manager)
-            .call(
-                abi.encodeWithSelector(
-                    ManagerWithTokenBalanceVerification.manageVaultWithNoVerification.selector,
-                    boringVault,
-                    targets,
-                    data,
-                    values
-                )
-            );
+        (success,) = address(manager).call(
+            abi.encodeWithSelector(
+                ManagerWithTokenBalanceVerification.manageVaultWithNoVerification.selector,
+                boringVault,
+                targets,
+                data,
+                values
+            )
+        );
         assertTrue(success, "owner should always be able to successfully call manageVaultWithNoVerification");
 
         assertEq(USDC.allowance(address(boringVault), usdcSpender), 777, "USDC should have an allowance");

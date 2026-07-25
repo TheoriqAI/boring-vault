@@ -1,0 +1,66 @@
+{
+  "nameEntropy": "testTqGOLD",
+  "base": "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff",
+  "protocolAdmin": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+  "boringVaultAndBaseDecimals": "6",
+  "boringVault": {
+    "boringVaultName": "testTqGOLD",
+    "boringVaultSymbol": "testTqGOLD",
+    "beforeTransferHookAddress": "0x0000000000000000000000000000000000000000",
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "freezeListBeforeTransferHook": {
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "manager": {
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "accountant": {
+    "payoutAddress": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+    "allowedExchangeRateChangeUpper": "10004",
+    "allowedExchangeRateChangeLower": "10000",
+    "minimumUpdateDelayInSeconds": "3600",
+    "managementFee": "0",
+    "performanceFee": "0",
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "teller": {
+    "maxGasForPeer": 100000,
+    "minGasForPeer": 0,
+    "peerEid": 30101,
+    "setupLZConfigs": false,
+    "tellerContractName": "MultiChainLayerZeroTellerWithMultiAssetSupport",
+    "withdrawAssets": [
+      "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff"
+    ],
+    "depositAssets": [
+      "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff"
+    ],
+    "dvnIfNoDefault": {
+      "required": [],
+      "optional": [],
+      "blockConfirmationsRequiredIfNoDefault": 15,
+      "optionalThreshold": 0
+    },
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "rolesAuthority": {
+    "strategist": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+    "exchangeRateBot": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+    "address": "0x0000000000000000000000000000000000000000"
+  },
+  "distributorCodeDepositor": {
+    "deploy": false,
+    "supplyCap": "115792089237316195423570985008687907853269984665640564039457584007913129639935",
+    "registry": "0x0000000000000000000000000000000000000000",
+    "policyID": "",
+    "nativeSupported": false
+  },
+  "withdrawQueue": {
+    "name": "testTqGOLD Withdraw Queue",
+    "symbol": "testTqGOLDQ",
+    "feeRecipient": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631",
+    "minimumOrderSize": "1000",
+    "processorAddress": "0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631"
+  }
+}

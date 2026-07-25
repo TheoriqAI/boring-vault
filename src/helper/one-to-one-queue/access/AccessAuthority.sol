@@ -168,8 +168,12 @@ abstract contract AccessAuthority is Pausable, VerboseAuth, Authority {
         bytes4 functionSelector = bytes4(data[:4]);
         // The following is identical to the RolesAuthority canCall logic, but negated for identifying if canCall is
         // False
-        if (!(isCapabilityPublic[target][functionSelector]
-                    || bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSelector])) {
+        if (
+            !(
+                isCapabilityPublic[target][functionSelector]
+                    || bytes32(0) != getUserRoles[user] & getRolesWithCapability[target][functionSelector]
+            )
+        ) {
             canCall = false;
             reasons = string(abi.encodePacked(reasons, "- Unauthorized "));
         }
@@ -197,7 +201,16 @@ abstract contract AccessAuthority is Pausable, VerboseAuth, Authority {
     }
 
     /// @notice return if a role has a capability to call a function
-    function doesRoleHaveCapability(uint8 role, address target, bytes4 functionSig) public view virtual returns (bool) {
+    function doesRoleHaveCapability(
+        uint8 role,
+        address target,
+        bytes4 functionSig
+    )
+        public
+        view
+        virtual
+        returns (bool)
+    {
         return (uint256(getRolesWithCapability[target][functionSig]) >> role) & 1 != 0;
     }
 

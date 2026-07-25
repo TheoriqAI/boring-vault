@@ -27,6 +27,11 @@
       "rateProvider": "0x0000000000000000000000000000000000000000",
       "name": "PAXG"
     },
+    "0x68749665ff8d2d112fa859aa293f07a622782f38": {
+      "isPegged": true,
+      "rateProvider": "0x0000000000000000000000000000000000000000",
+      "name": "XAUT"
+    },
     "0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0": {
       "isPegged": false,
       "denomination": "stETH/wstETH",
@@ -35,7 +40,7 @@
       "signature": "stEthPerToken()",
       "arg": 0,
       "expectedMin": "1000000000000000000",
-      "expectedMax": "1200000000000000000",
+      "expectedMax": "1300000000000000000",
       "rateProvider": "0xf7c9c121b09cd45591554eb8419a4e8a47e7b0a8"
     },
     "0xcd5fe23c85820f7b72d0926fc9b05b43e359b7ee": {

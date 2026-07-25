@@ -16,9 +16,8 @@ contract DeployManagerWithMerkleVerification is BaseScript {
 
     function _deploy(ConfigReader.Config memory config) public override broadcast returns (address) {
         // Require config Values
-        bytes32 managerSalt = makeSalt(
-            broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":ManagerWithMerkleVerification"))
-        );
+        bytes32 managerSalt =
+            makeSalt(broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":ManagerWithMerkleVerification")));
         require(config.boringVault != address(0), "boring vault address must not be zero");
         require(address(config.boringVault).code.length != 0, "boring vault must have code");
         require(

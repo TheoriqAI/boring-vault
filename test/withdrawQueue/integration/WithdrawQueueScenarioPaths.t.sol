@@ -125,4 +125,3 @@ contract WithdrawQueueScenarioPathsTest is WithdrawQueueIntegrationBaseTest {
     }
 
 }
-

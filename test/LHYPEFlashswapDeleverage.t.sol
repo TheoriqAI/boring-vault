@@ -135,8 +135,10 @@ contract LHYPEFlashswapDeleverageTest is Test {
 
         (
             uint256 totalCollateralBaseBefore,
-            uint256 totalDebtBaseBefore,,
-            uint256 liquidationThresholdBefore,,
+            uint256 totalDebtBaseBefore,
+            ,
+            uint256 liquidationThresholdBefore,
+            ,
             uint256 healthFactorBefore
         ) = pool_hfi.getUserAccountData(address(boringVault));
 
@@ -222,8 +224,10 @@ contract LHYPEFlashswapDeleverageTest is Test {
 
         (
             uint256 totalCollateralBaseBefore,
-            uint256 totalDebtBaseBefore,,
-            uint256 liquidationThresholdBefore,,
+            uint256 totalDebtBaseBefore,
+            ,
+            uint256 liquidationThresholdBefore,
+            ,
             uint256 healthFactorBefore
         ) = hyperlendPool_hlend.getUserAccountData(address(boringVault));
 
@@ -305,9 +309,8 @@ contract LHYPEFlashswapDeleverageTest is Test {
         leafs[0] = new bytes32[](leafsLength);
         for (uint256 i; i < leafsLength; ++i) {
             bytes4 selector = bytes4(keccak256(abi.encodePacked(manageLeafs[i].signature)));
-            bytes memory rawDigest = abi.encodePacked(
-                lhypeDecoderAndSanitizer, manageLeafs[i].target, manageLeafs[i].canSendValue, selector
-            );
+            bytes memory rawDigest =
+                abi.encodePacked(lhypeDecoderAndSanitizer, manageLeafs[i].target, manageLeafs[i].canSendValue, selector);
             uint256 argumentAddressesLength = manageLeafs[i].argumentAddresses.length;
             for (uint256 j; j < argumentAddressesLength; ++j) {
                 rawDigest = abi.encodePacked(rawDigest, manageLeafs[i].argumentAddresses[j]);

@@ -311,8 +311,9 @@ contract WithdrawQueueHandler is Test {
     }
 
     function _calculateFees(uint256 shares) internal view returns (uint256) {
-        return withdrawQueue.feeModule()
-            .calculateOfferFees(shares, IERC20(address(boringVault)), IERC20(address(USDC)), address(0));
+        return withdrawQueue.feeModule().calculateOfferFees(
+            shares, IERC20(address(boringVault)), IERC20(address(USDC)), address(0)
+        );
     }
 
     /**
@@ -357,4 +358,3 @@ contract WithdrawQueueHandler is Test {
     }
 
 }
-
