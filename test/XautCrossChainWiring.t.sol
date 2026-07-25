@@ -24,8 +24,12 @@ import { MultiChainLayerZeroTellerWithMultiAssetSupport } from
 abstract contract ForkStart is Test {
 
     constructor() {
-        if (block.chainid == 31_337) {
-            vm.selectFork(vm.createFork(vm.envString("L2_RPC_URL")));
+        if (bytes(vm.envOr("LIVE_DEPLOY_READ_FILE_NAME", string(""))).length > 0) {
+            if (block.chainid == 31_337) vm.selectFork(vm.createFork(vm.envString("L2_RPC_URL")));
+        } else {
+            // Not running the live integration test: stub CreateX so the DeployAll base constructor's
+            // presence check passes; setUp() then skips before CreateX is ever used.
+            vm.etch(vm.envOr("CREATEX", 0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed), hex"00");
         }
     }
 
@@ -38,6 +42,10 @@ contract XautCrossChainWiring is ForkStart, DeployAll {
     ERC20 constant NATIVE_ERC20 = ERC20(0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE);
 
     function setUp() public {
+        if (bytes(vm.envOr("LIVE_DEPLOY_READ_FILE_NAME", string(""))).length == 0) {
+            vm.skip(true);
+            return;
+        }
         runLiveTest(vm.envString("LIVE_DEPLOY_READ_FILE_NAME"));
         _wirePeer();
     }
