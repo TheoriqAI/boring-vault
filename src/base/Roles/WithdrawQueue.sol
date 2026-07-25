@@ -29,6 +29,7 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
         DEFAULT, // Normal order in queue
         PRE_FILLED, // Order filled out of order, skip on process
         REFUND // Order marked for refund, on process handle refund only
+
     }
 
     /// @notice Return type of a user's order status in the queue
@@ -41,6 +42,7 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
         COMPLETE_REFUNDED,
         FAILED_TRANSFER_REFUNDED, // In the event an order fails to transfer to it's receiver, we refund it
         FAILED_REFUND // Refund failed, order was refunded to the recovery address
+
     }
 
     /// @notice Approval method for submitting an order
@@ -79,7 +81,7 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
         bool didOrderFailTransfer; // Whether the order failed to transfer on process. In this event the shares are
         // refunded
         bool didOrderFailRefund; // Whether the order failed to refund. If so it will have been refunded to the recovery
-        // address
+            // address
     }
 
     bytes32 public constant CANCEL_ORDER_TYPEHASH =
@@ -524,9 +526,9 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
             // The following line will revert if the accountant is paused. Meaning a paused accountant will not result
             // in refunded orders. It is technically possible the accountant pause between this call and a bulkWithdraw.
             // But this is not feasible in any normal operation
-            uint256 expectedAssetsOut = tellerWithMultiAssetSupport.accountant()
-                .getRateInQuoteSafe(ERC20(address(order.wantAsset)))
-                .mulDivDown((order.amountOffer - feeAmount), 10 ** vault.decimals());
+            uint256 expectedAssetsOut = tellerWithMultiAssetSupport.accountant().getRateInQuoteSafe(
+                ERC20(address(order.wantAsset))
+            ).mulDivDown((order.amountOffer - feeAmount), 10 ** vault.decimals());
 
             uint256 vaultBalanceOfWantAsset = order.wantAsset.balanceOf(address(vault));
             if (vaultBalanceOfWantAsset < expectedAssetsOut) {
@@ -540,9 +542,7 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
 
             try tellerWithMultiAssetSupport.bulkWithdraw(
                 ERC20(address(order.wantAsset)), order.amountOffer - feeAmount, 0, receiver
-            ) returns (
-                uint256 assetsOut
-            ) {
+            ) returns (uint256 assetsOut) {
                 if (assetsOut == 0) {
                     revert InvalidAssetsOut();
                 }
@@ -603,17 +603,15 @@ contract WithdrawQueue is ERC721Enumerable, Auth, ReentrancyGuard {
 
         // Do nothing if using standard ERC20 approve
         if (params.signatureParams.approvalMethod == ApprovalMethod.EIP2612_PERMIT) {
-            try IERC20Permit(address(offerAsset))
-                .permit(
-                    depositor,
-                    address(this),
-                    params.amountOffer,
-                    params.signatureParams.deadline,
-                    params.signatureParams.approvalV,
-                    params.signatureParams.approvalR,
-                    params.signatureParams.approvalS
-                ) { }
-            catch {
+            try IERC20Permit(address(offerAsset)).permit(
+                depositor,
+                address(this),
+                params.amountOffer,
+                params.signatureParams.deadline,
+                params.signatureParams.approvalV,
+                params.signatureParams.approvalR,
+                params.signatureParams.approvalS
+            ) { } catch {
                 if (offerAsset.allowance(depositor, address(this)) < params.amountOffer) {
                     revert PermitFailedAndAllowanceTooLow();
                 }

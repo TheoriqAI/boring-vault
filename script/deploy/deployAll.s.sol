@@ -12,9 +12,8 @@ import { DeployFreezeListBeforeTransferHookScript } from "./single/03_DeployFree
 import { DeployManagerWithMerkleVerification } from "./single/04_DeployManagerWithMerkleVerification.s.sol";
 import { DeployAccountantWithRateProviders } from "./single/05_DeployAccountantWithRateProviders.s.sol";
 import { DeployTellerWithMultiAssetSupport } from "./single/06_DeployTellerWithMultiAssetSupport.s.sol";
-import {
-    DeployMultiChainLayerZeroTellerWithMultiAssetSupport
-} from "./single/06b_DeployMultiChainLayerZeroTellerWithMultiAssetSupport.s.sol";
+import { DeployMultiChainLayerZeroTellerWithMultiAssetSupport } from
+    "./single/06b_DeployMultiChainLayerZeroTellerWithMultiAssetSupport.s.sol";
 import { DeployMultiChainHyperlaneTeller } from "./single/06c_DeployMultiChainHyperlaneTeller.s.sol";
 import { DeployRolesAuthority } from "./single/07_DeployRolesAuthority.s.sol";
 import { TellerSetup } from "./single/08_TellerSetup.s.sol";

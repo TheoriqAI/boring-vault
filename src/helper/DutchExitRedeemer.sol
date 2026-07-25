@@ -39,7 +39,7 @@ contract DutchExitRedeemer is Auth, ReentrancyGuard {
     using FixedPointMathLib for uint256;
 
     uint16 internal constant BPS = 10_000;
-    uint16 internal constant MAX_FEE_BPS = 2_000; // hard 20% ceiling on the vault fee
+    uint16 internal constant MAX_FEE_BPS = 2000; // hard 20% ceiling on the vault fee
 
     struct BasketLeg {
         ERC20 asset;
@@ -79,9 +79,18 @@ contract DutchExitRedeemer is Auth, ReentrancyGuard {
     mapping(uint256 => Order) public orders;
     uint256 public orderCount;
 
-    event Requested(uint256 indexed orderId, address indexed user, uint256 shares, uint256 priceStart, uint256 priceFloor, uint64 duration);
+    event Requested(
+        uint256 indexed orderId,
+        address indexed user,
+        uint256 shares,
+        uint256 priceStart,
+        uint256 priceFloor,
+        uint64 duration
+    );
     event Cancelled(uint256 indexed orderId, address indexed user, uint256 shares);
-    event Filled(uint256 indexed orderId, address indexed user, address indexed filler, uint256 shares, uint256 cashPaid);
+    event Filled(
+        uint256 indexed orderId, address indexed user, address indexed filler, uint256 shares, uint256 cashPaid
+    );
     event BasketUpdated();
     event CashAssetUpdated(ERC20 indexed cashAsset);
     event VaultFeeUpdated(uint16 vaultFeeBps);

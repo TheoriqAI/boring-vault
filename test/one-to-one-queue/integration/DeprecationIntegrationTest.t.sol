@@ -182,7 +182,10 @@ contract DeprecationStep2IntegrationTest is OneToOneQueueTestBase {
         vm.stopPrank();
     }
 
-    function test_submitOrderRevertsWhenContractIsDeprecatedForAllButOwner() external givenContractFinishesDeprecation {
+    function test_submitOrderRevertsWhenContractIsDeprecatedForAllButOwner()
+        external
+        givenContractFinishesDeprecation
+    {
         vm.startPrank(user1);
         OneToOneQueue.SubmitOrderParams memory params =
             _createSubmitOrderParams(1e6, USDC, USDG0, user1, user1, user1, defaultParams);

@@ -37,13 +37,7 @@ contract PredicateRedeemPolicy is IRedeemPolicy, Auth, PredicateClient {
     error NotRedeemer(address caller);
     error UnauthorizedTransaction();
 
-    constructor(
-        address _owner,
-        address _registry,
-        string memory _policyID
-    )
-        Auth(_owner, Authority(address(0)))
-    {
+    constructor(address _owner, address _registry, string memory _policyID) Auth(_owner, Authority(address(0))) {
         if (_owner == address(0) || _registry == address(0)) revert ZeroAddress();
         enabled = true; // secure by default: a set policy enforces unless explicitly disabled
         _initPredicateClient(_registry, _policyID);
@@ -73,14 +67,7 @@ contract PredicateRedeemPolicy is IRedeemPolicy, Auth, PredicateClient {
     // ============================================ POLICY ==========================================
 
     /// @inheritdoc IRedeemPolicy
-    function authorizeRedeem(
-        address caller,
-        address receiver,
-        uint256 shares,
-        bytes calldata authData
-    )
-        external
-    {
+    function authorizeRedeem(address caller, address receiver, uint256 shares, bytes calldata authData) external {
         // Disabled check first: a disabled policy is a pure no-op regardless of caller, so an unset
         // `redeemer` cannot brick the "disabled" path. When enabled, only the pinned redeemer may call
         // (prevents a griefer pre-spending a user's single-use attestation uuid).
@@ -88,8 +75,7 @@ contract PredicateRedeemPolicy is IRedeemPolicy, Auth, PredicateClient {
         if (msg.sender != redeemer) revert NotRedeemer(msg.sender);
 
         Attestation memory attestation = abi.decode(authData, (Attestation));
-        bytes memory encodedSigAndArgs =
-            abi.encodeWithSignature(PREDICATE_REDEEM_SIGNATURE, caller, receiver, shares);
+        bytes memory encodedSigAndArgs = abi.encodeWithSignature(PREDICATE_REDEEM_SIGNATURE, caller, receiver, shares);
 
         // msgValue is 0: redeem/settle are non-payable. Attestation is bound to this policy contract
         // as target; the off-chain Predicate policy must be configured with this address.

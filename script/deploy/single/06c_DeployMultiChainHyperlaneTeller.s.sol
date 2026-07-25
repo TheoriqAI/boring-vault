@@ -2,9 +2,8 @@
 pragma solidity 0.8.21;
 
 import { AccountantWithRateProviders } from "./../../../src/base/Roles/AccountantWithRateProviders.sol";
-import {
-    MultiChainHyperlaneTellerWithMultiAssetSupport
-} from "./../../../src/base/Roles/CrossChain/MultiChainHyperlaneTellerWithMultiAssetSupport.sol";
+import { MultiChainHyperlaneTellerWithMultiAssetSupport } from
+    "./../../../src/base/Roles/CrossChain/MultiChainHyperlaneTellerWithMultiAssetSupport.sol";
 import { IMailbox } from "./../../../src/interfaces/hyperlane/IMailbox.sol";
 import { BaseScript } from "./../../Base.s.sol";
 import { stdJson as StdJson } from "@forge-std/StdJson.sol";

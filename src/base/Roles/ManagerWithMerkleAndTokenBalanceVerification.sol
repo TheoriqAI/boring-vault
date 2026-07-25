@@ -158,14 +158,7 @@ contract ManagerWithMerkleAndTokenBalanceVerification is ManagerWithMerkleVerifi
      * @dev Only callable by the BoringVault (i.e. via a merkle-verified manage call), like the inherited
      *      `flashLoan`. The provider is recorded so the callback can verify `msg.sender`.
      */
-    function morphoFlashLoan(
-        address morphoProvider,
-        address token,
-        uint256 assets,
-        bytes calldata userData
-    )
-        external
-    {
+    function morphoFlashLoan(address morphoProvider, address token, uint256 assets, bytes calldata userData) external {
         if (msg.sender != address(vault)) {
             revert ManagerWithMerkleAndTokenBalanceVerification__MorphoFlashLoanOnlyCallableByBoringVault();
         }
@@ -395,13 +388,7 @@ contract ManagerWithMerkleAndTokenBalanceVerification is ManagerWithMerkleVerifi
     /**
      * @notice Reverts unless every token's net vault-balance delta (after - before) is >= its minimum.
      */
-    function _checkTokenDeltas(
-        TokenDeltaCheck[] calldata deltaChecks,
-        uint256[] memory balancesBefore
-    )
-        internal
-        view
-    {
+    function _checkTokenDeltas(TokenDeltaCheck[] calldata deltaChecks, uint256[] memory balancesBefore) internal view {
         for (uint256 i; i < deltaChecks.length; ++i) {
             uint256 balanceAfter = ERC20(deltaChecks[i].token).balanceOf(address(vault));
             // Token balances are always < 2^255, so the int256 casts and checked subtraction cannot overflow.

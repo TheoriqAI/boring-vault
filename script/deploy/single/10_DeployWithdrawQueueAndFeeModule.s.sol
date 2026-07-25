@@ -90,9 +90,8 @@ contract DeployWithdrawQueueAndFeeModule is BaseScript {
                 broadcaster,
                 config.protocolAdmin
             );
-            withdrawQueue = CREATEX.deployCreate3(
-                withdrawQueueSalt, abi.encodePacked(type(WithdrawQueue).creationCode, args)
-            );
+            withdrawQueue =
+                CREATEX.deployCreate3(withdrawQueueSalt, abi.encodePacked(type(WithdrawQueue).creationCode, args));
         }
         config.withdrawQueue = withdrawQueue;
         require(
@@ -101,23 +100,26 @@ contract DeployWithdrawQueueAndFeeModule is BaseScript {
         );
 
         // Set Role Capabilities
-        RolesAuthority(config.rolesAuthority)
-            .setRoleCapability(
-                WITHDRAW_QUEUE_PROCESSOR_ROLE, address(withdrawQueue), WithdrawQueue.processOrders.selector, true
-            );
+        RolesAuthority(config.rolesAuthority).setRoleCapability(
+            WITHDRAW_QUEUE_PROCESSOR_ROLE, address(withdrawQueue), WithdrawQueue.processOrders.selector, true
+        );
 
         // Set Public Capabilities
-        RolesAuthority(config.rolesAuthority)
-            .setPublicCapability(address(withdrawQueue), WithdrawQueue.submitOrder.selector, true);
-        RolesAuthority(config.rolesAuthority)
-            .setPublicCapability(address(withdrawQueue), WithdrawQueue.cancelOrder.selector, true);
-        RolesAuthority(config.rolesAuthority)
-            .setPublicCapability(address(withdrawQueue), WithdrawQueue.cancelOrderWithSignature.selector, true);
+        RolesAuthority(config.rolesAuthority).setPublicCapability(
+            address(withdrawQueue), WithdrawQueue.submitOrder.selector, true
+        );
+        RolesAuthority(config.rolesAuthority).setPublicCapability(
+            address(withdrawQueue), WithdrawQueue.cancelOrder.selector, true
+        );
+        RolesAuthority(config.rolesAuthority).setPublicCapability(
+            address(withdrawQueue), WithdrawQueue.cancelOrderWithSignature.selector, true
+        );
         RolesAuthority(config.rolesAuthority).setUserRole(address(withdrawQueue), SOLVER_ROLE, true);
 
         // Assign roles to addresses
-        RolesAuthority(config.rolesAuthority)
-            .setUserRole(config.withdrawQueueProcessorAddress, WITHDRAW_QUEUE_PROCESSOR_ROLE, true);
+        RolesAuthority(config.rolesAuthority).setUserRole(
+            config.withdrawQueueProcessorAddress, WITHDRAW_QUEUE_PROCESSOR_ROLE, true
+        );
 
         return address(withdrawQueue);
     }

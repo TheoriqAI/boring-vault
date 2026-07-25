@@ -17,12 +17,6 @@ interface IRedeemPolicy {
     /// @param receiver the recipient of the slice (the party usually subject to KYC/sanctions checks)
     /// @param shares the total shares being redeemed / settled
     /// @param authData opaque authorization payload (attestation / signature / empty)
-    function authorizeRedeem(
-        address caller,
-        address receiver,
-        uint256 shares,
-        bytes calldata authData
-    )
-        external;
+    function authorizeRedeem(address caller, address receiver, uint256 shares, bytes calldata authData) external;
 
 }

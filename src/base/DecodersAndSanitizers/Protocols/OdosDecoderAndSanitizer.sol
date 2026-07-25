@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.21;
 
-import {
-    BaseDecoderAndSanitizer,
-    DecoderCustomTypes
-} from "src/base/DecodersAndSanitizers/BaseDecoderAndSanitizer.sol";
+import { BaseDecoderAndSanitizer, DecoderCustomTypes } from "src/base/DecodersAndSanitizers/BaseDecoderAndSanitizer.sol";
 
 /**
  * @title OdosDecoderAndSanitizer
@@ -40,11 +37,7 @@ abstract contract OdosDecoderAndSanitizer is BaseDecoderAndSanitizer {
         returns (bytes memory addressesFound)
     {
         addressesFound = abi.encodePacked(
-            tokenInfo.inputToken,
-            tokenInfo.inputReceiver,
-            tokenInfo.outputToken,
-            tokenInfo.outputReceiver,
-            executor
+            tokenInfo.inputToken, tokenInfo.inputReceiver, tokenInfo.outputToken, tokenInfo.outputReceiver, executor
         );
     }
 

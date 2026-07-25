@@ -19,13 +19,14 @@ contract DeployDistributorCodeDepositor is BaseScript {
 
     function run() external broadcast {
         bytes memory creationCode = type(DistributorCodeDepositor).creationCode;
-        address distributorCodeDepositor =
-            (CREATEX.deployCreate3(
+        address distributorCodeDepositor = (
+            CREATEX.deployCreate3(
                 salt,
                 abi.encodePacked(
                     creationCode, abi.encode(teller, nativeWrapper, rolesAuthority, isNativeDepositSupported, owner)
                 )
-            ));
+            )
+        );
         require(DistributorCodeDepositor(distributorCodeDepositor).owner() == getMultisig());
         console.log(distributorCodeDepositor);
     }

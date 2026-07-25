@@ -96,9 +96,7 @@ contract ManagerWithMerkleAndTokenBalanceVerificationTest is Test {
         manager.setAuthority(auth);
         // Manager (as MANAGER_ROLE) may drive the vault; the test contract is the manager's owner, so it
         // can call the manager's requiresAuth entrypoints directly without a role.
-        auth.setRoleCapability(
-            MANAGER_ROLE, address(vault), bytes4(keccak256("manage(address,bytes,uint256)")), true
-        );
+        auth.setRoleCapability(MANAGER_ROLE, address(vault), bytes4(keccak256("manage(address,bytes,uint256)")), true);
         auth.setUserRole(address(manager), MANAGER_ROLE, true);
         // The manager re-enters manageVaultWithMerkleVerification during the flash-loan callback (an
         // external self-call), so it needs the internal manager role — same wiring as the Balancer path.
@@ -118,21 +116,13 @@ contract ManagerWithMerkleAndTokenBalanceVerificationTest is Test {
 
     /// @dev Empty strategy batch for the Blue path: token-prefixed (the callback isn't passed the token).
     function _emptyStrategyUserData(address token) internal pure returns (bytes memory) {
-        return abi.encode(
-            token,
-            new bytes32[][](0),
-            new address[](0),
-            new address[](0),
-            new bytes[](0),
-            new uint256[](0)
-        );
+        return
+            abi.encode(token, new bytes32[][](0), new address[](0), new address[](0), new bytes[](0), new uint256[](0));
     }
 
     /// @dev Empty strategy batch for the Midnight path: no token prefix (tokens arrive via the callback).
     function _emptyMidnightUserData() internal pure returns (bytes memory) {
-        return abi.encode(
-            new bytes32[][](0), new address[](0), new address[](0), new bytes[](0), new uint256[](0)
-        );
+        return abi.encode(new bytes32[][](0), new address[](0), new address[](0), new bytes[](0), new uint256[](0));
     }
 
     // --- helpers -------------------------------------------------------------

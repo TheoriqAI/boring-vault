@@ -4,9 +4,8 @@ pragma solidity 0.8.21;
 import { BaseScript } from "script/Base.s.sol";
 import { RedEnvelopeUpgrade, CONTRACT } from "src/helper/upgrade/RedEnvelope.sol";
 import { AccountantWithRateProviders } from "src/base/Roles/AccountantWithRateProviders.sol";
-import {
-    MultiChainLayerZeroTellerWithMultiAssetSupport
-} from "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
+import { MultiChainLayerZeroTellerWithMultiAssetSupport } from
+    "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
 import { DistributorCodeDepositor } from "src/helper/DistributorCodeDepositor.sol";
 import { WithdrawQueue } from "src/base/Roles/WithdrawQueue.sol";
 import { SimpleFeeModule } from "src/helper/SimpleFeeModule.sol";

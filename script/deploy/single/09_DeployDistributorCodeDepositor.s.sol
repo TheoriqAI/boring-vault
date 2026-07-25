@@ -83,17 +83,16 @@ contract DeployDistributorCodeDepositor is BaseScript {
             )
         );
 
-        RolesAuthority(config.rolesAuthority)
-            .setPublicCapability(address(distributorCodeDepositor), distributorCodeDepositor.deposit.selector, true);
-        RolesAuthority(config.rolesAuthority)
-            .setPublicCapability(
-                address(distributorCodeDepositor), distributorCodeDepositor.depositWithPermit.selector, true
-            );
+        RolesAuthority(config.rolesAuthority).setPublicCapability(
+            address(distributorCodeDepositor), distributorCodeDepositor.deposit.selector, true
+        );
+        RolesAuthority(config.rolesAuthority).setPublicCapability(
+            address(distributorCodeDepositor), distributorCodeDepositor.depositWithPermit.selector, true
+        );
         if (config.distributorCodeDepositorIsNativeDepositSupported) {
-            RolesAuthority(config.rolesAuthority)
-                .setPublicCapability(
-                    address(distributorCodeDepositor), distributorCodeDepositor.depositNative.selector, true
-                );
+            RolesAuthority(config.rolesAuthority).setPublicCapability(
+                address(distributorCodeDepositor), distributorCodeDepositor.depositNative.selector, true
+            );
         }
 
         // Grant the DEPOSITOR ROLE to the distributor code depositor

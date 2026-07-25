@@ -9,9 +9,8 @@ import { BoringVault } from "src/base/BoringVault.sol";
 import { AccountantWithRateProviders } from "src/base/Roles/AccountantWithRateProviders.sol";
 import { TellerWithMultiAssetSupport } from "src/base/Roles/TellerWithMultiAssetSupport.sol";
 import { CrossChainTellerBase, BridgeData } from "src/base/Roles/CrossChain/CrossChainTellerBase.sol";
-import {
-    MultiChainLayerZeroTellerWithMultiAssetSupport
-} from "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
+import { MultiChainLayerZeroTellerWithMultiAssetSupport } from
+    "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
 
 /**
  * @notice Proves the LayerZero cross-chain path for the nXAUT vault works once the peer is wired.
@@ -55,12 +54,7 @@ contract XautCrossChainWiring is ForkStart, DeployAll {
         vm.startPrank(mainConfig.protocolAdmin);
         teller.setPeer(uint32(mainConfig.peerEid), peer);
         teller.addChain(
-            uint32(mainConfig.peerEid),
-            true,
-            true,
-            address(teller),
-            mainConfig.maxGasForPeer,
-            mainConfig.minGasForPeer
+            uint32(mainConfig.peerEid), true, true, address(teller), mainConfig.maxGasForPeer, mainConfig.minGasForPeer
         );
         vm.stopPrank();
     }

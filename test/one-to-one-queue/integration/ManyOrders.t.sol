@@ -319,12 +319,11 @@ contract OneToOneQueueTestManyOrders is OneToOneQueueTestBase {
             "Last processed order should be the total number of orders"
         );
 
-        uint256 totalUSDG0ForUser = (ordersToPlace.length - refundCount) * 1e6 - (ordersToPlace.length - refundCount)
-            * 1e6 * TEST_OFFER_FEE_PERCENTAGE / 10_000;
+        uint256 totalUSDG0ForUser = (ordersToPlace.length - refundCount) * 1e6
+            - (ordersToPlace.length - refundCount) * 1e6 * TEST_OFFER_FEE_PERCENTAGE / 10_000;
         assertEq(
             USDG0.balanceOf(user1), totalUSDG0ForUser, "User1 should have their total USDG0 balance after processing"
         );
     }
 
 }
-

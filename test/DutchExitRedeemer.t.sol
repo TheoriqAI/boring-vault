@@ -131,7 +131,9 @@ contract DutchExitRedeemerTest is ForkStart, DeployAll {
         uint256 id = _request(alice, 1000e6, 1000e6, 900e6, DURATION);
         vm.prank(filler);
         vm.expectRevert(
-            abi.encodeWithSelector(DutchExitRedeemer.InsufficientVaultLiquidity.selector, ERC20(address(bond)), 300e6, 0)
+            abi.encodeWithSelector(
+                DutchExitRedeemer.InsufficientVaultLiquidity.selector, ERC20(address(bond)), 300e6, 0
+            )
         );
         redeemer.fillDutch(id, 1000e6, _zeros());
     }
@@ -143,7 +145,9 @@ contract DutchExitRedeemerTest is ForkStart, DeployAll {
         uint256 id = _request(alice, 1000e6, 1000e6, 900e6, DURATION);
         // price is 1000e6 at t0; filler caps at 940e6
         vm.prank(filler);
-        vm.expectRevert(abi.encodeWithSelector(DutchExitRedeemer.PriceAboveMax.selector, uint256(1000e6), uint256(940e6)));
+        vm.expectRevert(
+            abi.encodeWithSelector(DutchExitRedeemer.PriceAboveMax.selector, uint256(1000e6), uint256(940e6))
+        );
         redeemer.fillDutch(id, 940e6, _zeros());
     }
 

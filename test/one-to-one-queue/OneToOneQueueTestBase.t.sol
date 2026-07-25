@@ -149,9 +149,8 @@ abstract contract OneToOneQueueTestBase is Test {
     function setUp() public virtual {
         vm.startPrank(owner);
         feeModule = new SimpleFeeModule(TEST_OFFER_FEE_PERCENTAGE);
-        queue = new OneToOneQueue(
-            "name", "symbol", mockBoringVaultAddress, feeRecipient, feeModule, recoveryAddress, owner
-        );
+        queue =
+            new OneToOneQueue("name", "symbol", mockBoringVaultAddress, feeRecipient, feeModule, recoveryAddress, owner);
 
         address[] memory pausers = new address[](2);
         pausers[0] = pauser1;

@@ -330,7 +330,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
         targetData[1] = abi.encodeWithSelector(BalancerV2DecoderAndSanitizer.swap.selector, singleSwap, funds, 0);
         targetData[2] = abi.encodeWithSignature("approve(address,uint256)", vault, type(uint256).max);
         DecoderCustomTypes.JoinPoolRequest memory joinRequest = DecoderCustomTypes.JoinPoolRequest({
-            assets: new address[](2), maxAmountsIn: new uint256[](2), userData: hex"", fromInternalBalance: false
+            assets: new address[](2),
+            maxAmountsIn: new uint256[](2),
+            userData: hex"",
+            fromInternalBalance: false
         });
         joinRequest.assets[0] = address(RETH);
         joinRequest.assets[1] = address(WETH);
@@ -356,7 +359,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
             "withdraw(uint256,address,address)", 203_690_537_881_715_311_640, address(boringVault), address(boringVault)
         );
         DecoderCustomTypes.ExitPoolRequest memory exitRequest = DecoderCustomTypes.ExitPoolRequest({
-            assets: new address[](2), minAmountsOut: new uint256[](2), userData: hex"", toInternalBalance: false
+            assets: new address[](2),
+            minAmountsOut: new uint256[](2),
+            userData: hex"",
+            toInternalBalance: false
         });
         exitRequest.assets[0] = address(RETH);
         exitRequest.assets[1] = address(WETH);
@@ -1706,7 +1712,8 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
 
         vm.expectRevert(
             abi.encodeWithSelector(
-                ManagerWithMerkleVerification.ManagerWithMerkleVerification__TotalSupplyMustRemainConstantDuringManagement
+                ManagerWithMerkleVerification
+                    .ManagerWithMerkleVerification__TotalSupplyMustRemainConstantDuringManagement
                     .selector
             )
         );
@@ -1904,7 +1911,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
         targetData[1] = abi.encodeWithSelector(BalancerV2DecoderAndSanitizer.swap.selector, singleSwap, funds, 0);
         targetData[2] = abi.encodeWithSignature("approve(address,uint256)", vault, type(uint256).max);
         DecoderCustomTypes.JoinPoolRequest memory joinRequest = DecoderCustomTypes.JoinPoolRequest({
-            assets: new address[](2), maxAmountsIn: new uint256[](2), userData: hex"", fromInternalBalance: false
+            assets: new address[](2),
+            maxAmountsIn: new uint256[](2),
+            userData: hex"",
+            fromInternalBalance: false
         });
         joinRequest.assets[0] = address(RETH);
         joinRequest.assets[1] = address(WETH);
@@ -1930,7 +1940,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
             "withdraw(uint256,address,address)", 203_690_537_881_715_311_640, address(boringVault), address(boringVault)
         );
         DecoderCustomTypes.ExitPoolRequest memory exitRequest = DecoderCustomTypes.ExitPoolRequest({
-            assets: new address[](2), minAmountsOut: new uint256[](2), userData: hex"", toInternalBalance: false
+            assets: new address[](2),
+            minAmountsOut: new uint256[](2),
+            userData: hex"",
+            toInternalBalance: false
         });
         exitRequest.assets[0] = address(RETH);
         exitRequest.assets[1] = address(WETH);
@@ -2036,7 +2049,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
 
         // Set joinPool fromInternalBalance to true.
         joinRequest = DecoderCustomTypes.JoinPoolRequest({
-            assets: new address[](2), maxAmountsIn: new uint256[](2), userData: hex"", fromInternalBalance: true
+            assets: new address[](2),
+            maxAmountsIn: new uint256[](2),
+            userData: hex"",
+            fromInternalBalance: true
         });
         joinRequest.assets[0] = address(RETH);
         joinRequest.assets[1] = address(WETH);
@@ -2063,7 +2079,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
 
         // Fix joinPool.
         joinRequest = DecoderCustomTypes.JoinPoolRequest({
-            assets: new address[](2), maxAmountsIn: new uint256[](2), userData: hex"", fromInternalBalance: false
+            assets: new address[](2),
+            maxAmountsIn: new uint256[](2),
+            userData: hex"",
+            fromInternalBalance: false
         });
         joinRequest.assets[0] = address(RETH);
         joinRequest.assets[1] = address(WETH);
@@ -2081,7 +2100,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
 
         // Set exitPool toInternalBalance to true.
         exitRequest = DecoderCustomTypes.ExitPoolRequest({
-            assets: new address[](2), minAmountsOut: new uint256[](2), userData: hex"", toInternalBalance: true
+            assets: new address[](2),
+            minAmountsOut: new uint256[](2),
+            userData: hex"",
+            toInternalBalance: true
         });
         exitRequest.assets[0] = address(RETH);
         exitRequest.assets[1] = address(WETH);
@@ -2106,7 +2128,10 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
 
         // Fix exitPool
         exitRequest = DecoderCustomTypes.ExitPoolRequest({
-            assets: new address[](2), minAmountsOut: new uint256[](2), userData: hex"", toInternalBalance: false
+            assets: new address[](2),
+            minAmountsOut: new uint256[](2),
+            userData: hex"",
+            toInternalBalance: false
         });
         exitRequest.assets[0] = address(RETH);
         exitRequest.assets[1] = address(WETH);
@@ -2972,7 +2997,8 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
         vm.expectRevert(
             bytes(
                 abi.encodeWithSelector(
-                    EigenLayerLSTStakingDecoderAndSanitizer.EigenLayerLSTStakingDecoderAndSanitizer__CanOnlyReceiveAsTokens
+                    EigenLayerLSTStakingDecoderAndSanitizer
+                        .EigenLayerLSTStakingDecoderAndSanitizer__CanOnlyReceiveAsTokens
                         .selector
                 )
             )
@@ -2983,7 +3009,14 @@ contract ManagerWithMerkleVerificationTest is Test, MainnetAddresses {
     // ========================================= HELPER FUNCTIONS =========================================
     bool doNothing = true;
 
-    function flashLoan(address, address[] calldata tokens, uint256[] calldata amounts, bytes memory userData) external {
+    function flashLoan(
+        address,
+        address[] calldata tokens,
+        uint256[] calldata amounts,
+        bytes memory userData
+    )
+        external
+    {
         if (doNothing) {
             return;
         } else {

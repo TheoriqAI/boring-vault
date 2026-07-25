@@ -100,7 +100,11 @@ abstract contract SpectraDecoderAndSanitizer {
     // @desc redeem some PT AND YT for IBT tokens on Spectra without minIbts specified
     // @tag receiver:address:receiver of the IBT tokens
     // @tag owner:address:shares are burned from the owner address
-    function redeemForIBT(uint256, address receiver, address owner)
+    function redeemForIBT(
+        uint256,
+        address receiver,
+        address owner
+    )
         external
         pure
         returns (bytes memory addressesFound)
@@ -159,7 +163,15 @@ abstract contract SpectraDecoderAndSanitizer {
     // @desc withdraw IBT tokens from Spectra PT without maxShares specified
     // @tag receiver:address:receiver of the IBT tokens
     // @tag owner:address:shares are burned from the owner address
-    function withdrawIBT(uint256, address receiver, address owner) external pure returns (bytes memory addressesFound) {
+    function withdrawIBT(
+        uint256,
+        address receiver,
+        address owner
+    )
+        external
+        pure
+        returns (bytes memory addressesFound)
+    {
         return abi.encodePacked(receiver, owner);
     }
 

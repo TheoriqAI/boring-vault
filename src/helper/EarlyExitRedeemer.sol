@@ -41,7 +41,7 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
     using FixedPointMathLib for uint256;
 
     uint16 internal constant BPS = 10_000;
-    uint16 internal constant MAX_FEE_BPS = 2_000; // hard 20% ceiling on the discount band (fat-finger guard)
+    uint16 internal constant MAX_FEE_BPS = 2000; // hard 20% ceiling on the discount band (fat-finger guard)
 
     struct BasketLeg {
         ERC20 asset;
@@ -105,10 +105,10 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
     event Requested(uint256 indexed orderId, address indexed user, uint256 shares, uint16 maxFeeBps, bool allCash);
     event Cancelled(uint256 indexed orderId, address indexed user, uint256 shares);
     event Filled(uint256 indexed orderId, address indexed user, uint256 shares, uint16 feeBps);
-    event FilledAllCash(
+    event FilledAllCash( // == address(shareToken) when the vault underwrote
         uint256 indexed orderId,
         address indexed user,
-        address indexed underwriter, // == address(shareToken) when the vault underwrote
+        address indexed underwriter,
         uint256 shares,
         uint16 feeBps,
         uint256 payout,
@@ -157,12 +157,7 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
     error HaircutNotSet();
     error AccretionViolation(uint256 cashPot, uint256 payout);
 
-    constructor(
-        address _owner,
-        TellerWithMultiAssetSupport _teller
-    )
-        Auth(_owner, Authority(address(0)))
-    {
+    constructor(address _owner, TellerWithMultiAssetSupport _teller) Auth(_owner, Authority(address(0))) {
         if (_owner == address(0) || address(_teller) == address(0)) revert ZeroAddress();
         teller = _teller;
         accountant = _teller.accountant();
@@ -337,7 +332,15 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
 
     // ==================================== FILL: PROPORTIONAL SLICE =================================
 
-    function fillEarlyExit(uint256 orderId, uint16 feeBps, uint256[] calldata minOut) external nonReentrant requiresAuth {
+    function fillEarlyExit(
+        uint256 orderId,
+        uint16 feeBps,
+        uint256[] calldata minOut
+    )
+        external
+        nonReentrant
+        requiresAuth
+    {
         _fill(orderId, feeBps, minOut, "");
     }
 
@@ -476,13 +479,16 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
             uint256 got = asset.balanceOf(address(this)) - before;
             if (got == 0) revert OrderTooSmallForSlice();
             if (basket[i].illiquid) {
-                if (got < bid.minUnits[illiquidIdx]) revert UnderwriterMinUnits(illiquidIdx, got, bid.minUnits[illiquidIdx]);
+                if (got < bid.minUnits[illiquidIdx]) {
+                    revert UnderwriterMinUnits(illiquidIdx, got, bid.minUnits[illiquidIdx]);
+                }
                 ++illiquidIdx;
                 asset.safeTransfer(bid.underwriter, got); // illiquid goes to the underwriter
             }
             // liquid legs are payoutStable and simply accumulate in this contract
         }
-        payoutStable.safeTransferFrom(bid.underwriter, address(this), bid.cashIn); // underwriter's cash for the illiquid
+        payoutStable.safeTransferFrom(bid.underwriter, address(this), bid.cashIn); // underwriter's cash for the
+            // illiquid
         cashPot = payoutStable.balanceOf(address(this)) - stableBefore;
     }
 
@@ -586,7 +592,14 @@ contract EarlyExitRedeemer is Auth, ReentrancyGuard {
     }
 
     /// @notice Payout stable an all-cash exit of `orderId` at `feeBps` would deliver, and the illiquid NAV value.
-    function previewAllCash(uint256 orderId, uint16 feeBps) external view returns (uint256 payout, uint256 illiquidValue) {
+    function previewAllCash(
+        uint256 orderId,
+        uint16 feeBps
+    )
+        external
+        view
+        returns (uint256 payout, uint256 illiquidValue)
+    {
         Order storage o = orders[orderId];
         if (o.closed || o.shares == 0 || address(payoutStable) == address(0)) return (0, 0);
         payout = _sharesToStable(o.shares).mulDivDown(BPS - feeBps, BPS);

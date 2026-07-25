@@ -178,9 +178,13 @@ contract AccountantWithRateProvidersTest is Test, MainnetAddresses {
             uint128 fees_owed,
             uint128 total_shares,
             uint96 current_exchange_rate,
-            uint96 highestExchangeRate,,,
+            uint96 highestExchangeRate,
+            ,
+            ,
             uint64 last_update_timestamp,
-            bool is_paused,,,
+            bool is_paused,
+            ,
+            ,
         ) = accountant.accountantState();
         assertEq(fees_owed, 0, "Fees owed should be 0");
         assertEq(total_shares, 1000e18, "Total shares should be 1_000e18");

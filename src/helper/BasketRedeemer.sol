@@ -210,14 +210,7 @@ contract BasketRedeemer is Auth, ReentrancyGuard {
         _redeem(shares, receiver, minOut, authData);
     }
 
-    function _redeem(
-        uint256 shares,
-        address receiver,
-        uint256[] memory minOut,
-        bytes memory authData
-    )
-        internal
-    {
+    function _redeem(uint256 shares, address receiver, uint256[] memory minOut, bytes memory authData) internal {
         uint256 n = basket.length;
         if (n == 0) revert EmptyBasket();
         if (shares == 0) revert ZeroShares();
@@ -389,8 +382,8 @@ contract BasketRedeemer is Auth, ReentrancyGuard {
     /// @dev Mirrors solmate Auth.requiresAuth for a manual (non-modifier) authorization check.
     function _isAuthorized(bytes4 functionSig) internal view returns (bool) {
         Authority auth = authority;
-        return (address(auth) != address(0) && auth.canCall(msg.sender, address(this), functionSig))
-            || msg.sender == owner;
+        return
+            (address(auth) != address(0) && auth.canCall(msg.sender, address(this), functionSig)) || msg.sender == owner;
     }
 
     function _requirePricing(ERC20 asset) internal view {

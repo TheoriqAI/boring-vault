@@ -26,7 +26,13 @@ interface ITellerWithMultiAssetSupport is IAuth {
         uint256 shareLockUpPeriodAtTimeOfDeposit
     )
         external;
-    function deposit(ERC20 depositAsset, uint256 depositAmount, uint256 minimumMint) external returns (uint256 shares);
+    function deposit(
+        ERC20 depositAsset,
+        uint256 depositAmount,
+        uint256 minimumMint
+    )
+        external
+        returns (uint256 shares);
     function depositWithPermit(
         ERC20 depositAsset,
         uint256 depositAmount,

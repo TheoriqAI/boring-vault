@@ -1,10 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.21;
 
-import {
-    BaseDecoderAndSanitizer,
-    DecoderCustomTypes
-} from "src/base/DecodersAndSanitizers/BaseDecoderAndSanitizer.sol";
+import { BaseDecoderAndSanitizer, DecoderCustomTypes } from "src/base/DecodersAndSanitizers/BaseDecoderAndSanitizer.sol";
 
 /**
  * @title OKXDecoderAndSanitizer
@@ -53,8 +50,7 @@ abstract contract OKXDecoderAndSanitizer is BaseDecoderAndSanitizer {
         pure
         returns (bytes memory addressesFound)
     {
-        addressesFound =
-            abi.encodePacked(receiver, address(uint160(baseRequest.fromToken)), baseRequest.toToken);
+        addressesFound = abi.encodePacked(receiver, address(uint160(baseRequest.fromToken)), baseRequest.toToken);
     }
 
     // @desc unxswap to a receiver via the OKX DexRouter

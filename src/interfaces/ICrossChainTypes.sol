@@ -8,7 +8,6 @@ import { ERC20 } from "@solmate/tokens/ERC20.sol";
  * MultiChainTellerBase, and BeforeTransferHook. Defined here to avoid circular
  * imports between those files.
  */
-
 struct BridgeData {
     uint32 chainSelector;
     address destinationChainReceiver;

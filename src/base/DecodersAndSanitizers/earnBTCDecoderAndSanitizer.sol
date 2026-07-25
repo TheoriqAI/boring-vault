@@ -8,17 +8,13 @@ import {
 } from "src/base/DecodersAndSanitizers/Protocols/PendleRouterDecoderAndSanitizer.sol";
 import { PumpBTCDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/PumpBTCDecoderAndSanitizer.sol";
 import { swBTCDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/swBTCDecoderAndSanitizer.sol";
-import {
-    UniswapV3DecoderAndSanitizer
-} from "src/base/DecodersAndSanitizers/Protocols/UniswapV3DecoderAndSanitizer.sol";
+import { UniswapV3DecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/UniswapV3DecoderAndSanitizer.sol";
 import { OneInchDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/OneInchDecoderAndSanitizer.sol";
-import {
-    BalancerV2DecoderAndSanitizer
-} from "src/base/DecodersAndSanitizers/Protocols/BalancerV2DecoderAndSanitizer.sol";
+import { BalancerV2DecoderAndSanitizer } from
+    "src/base/DecodersAndSanitizers/Protocols/BalancerV2DecoderAndSanitizer.sol";
 import { CurveDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/CurveDecoderAndSanitizer.sol";
-import {
-    NativeWrapperDecoderAndSanitizer
-} from "src/base/DecodersAndSanitizers/Protocols/NativeWrapperDecoderAndSanitizer.sol";
+import { NativeWrapperDecoderAndSanitizer } from
+    "src/base/DecodersAndSanitizers/Protocols/NativeWrapperDecoderAndSanitizer.sol";
 import { ERC4626DecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/ERC4626DecoderAndSanitizer.sol";
 import { EigenpieDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/EigenpieDecoderAndSanitizer.sol";
 import { PirexEthDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/PirexEthDecoderAndSanitizer.sol";
@@ -52,10 +48,7 @@ contract earnBTCDecoderAndSanitizer is
         external
         pure
         override(
-            BalancerV2DecoderAndSanitizer,
-            swBTCDecoderAndSanitizer,
-            CurveDecoderAndSanitizer,
-            ERC4626DecoderAndSanitizer
+            BalancerV2DecoderAndSanitizer, swBTCDecoderAndSanitizer, CurveDecoderAndSanitizer, ERC4626DecoderAndSanitizer
         )
         returns (bytes memory addressesFound)
     {

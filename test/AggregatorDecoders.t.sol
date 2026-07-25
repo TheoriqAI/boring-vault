@@ -176,7 +176,8 @@ contract AggregatorDecodersTest is Test {
         inputs[0] = DecoderCustomTypes.OdosInputTokenInfo({ tokenAddress: SRC, amountIn: 1e18, receiver: AT });
         DecoderCustomTypes.OdosOutputTokenInfo[] memory outputs = new DecoderCustomTypes.OdosOutputTokenInfo[](1);
         outputs[0] = DecoderCustomTypes.OdosOutputTokenInfo({ tokenAddress: DST, relativeValue: 1, receiver: VAULT });
-        bytes memory packed = _decode(abi.encodeWithSelector(sel, inputs, outputs, uint256(1), hex"aabb", EXEC, uint32(0)));
+        bytes memory packed =
+            _decode(abi.encodeWithSelector(sel, inputs, outputs, uint256(1), hex"aabb", EXEC, uint32(0)));
         assertEq(packed, abi.encodePacked(SRC, AT, DST, VAULT, EXEC), "odos swapMulti packed mismatch");
     }
 
@@ -212,8 +213,9 @@ contract AggregatorDecodersTest is Test {
     function testOkxUnxswapTo() external {
         bytes4 sel = bytes4(keccak256("unxswapTo(uint256,uint256,uint256,address,bytes32[])"));
         assertEq(sel, okx.unxswapTo.selector, "unxswapTo selector mismatch");
-        bytes memory callData =
-            abi.encodeWithSelector(sel, uint256(uint160(SRC)) | FLAGS, uint256(1e18), uint256(1), VAULT, new bytes32[](0));
+        bytes memory callData = abi.encodeWithSelector(
+            sel, uint256(uint160(SRC)) | FLAGS, uint256(1e18), uint256(1), VAULT, new bytes32[](0)
+        );
         bytes memory packed = _decodeAt(address(okx), callData);
         assertEq(packed, abi.encodePacked(SRC, VAULT), "okx unxswapTo packed mismatch");
     }

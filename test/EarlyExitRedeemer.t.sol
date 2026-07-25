@@ -262,7 +262,9 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         assertEq(bond.balanceOf(alice), 0, "no illiquid to the exiter");
         // vault KEEPS the illiquid untouched, and captures the whole 20e6 fee
         assertEq(bond.balanceOf(address(vault)), vaultBondBefore, "vault keeps the illiquid");
-        assertEq(usdc.balanceOf(address(vault)), vaultUsdcBefore - 980e6, "whole fee retained (only 980 left the vault)");
+        assertEq(
+            usdc.balanceOf(address(vault)), vaultUsdcBefore - 980e6, "whole fee retained (only 980 left the vault)"
+        );
     }
 
     // -------------------------------------------------------- all-cash: external underwriter (mode A)
@@ -275,7 +277,7 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         redeemer.setUnderwriter(uw, true);
 
         // fund the underwriter with USDC to pay for the illiquid, and approve the redeemer
-        deal(address(usdc), uw, 1_000e6);
+        deal(address(usdc), uw, 1000e6);
         vm.prank(uw);
         usdc.approve(address(redeemer), type(uint256).max);
 
@@ -286,14 +288,15 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         illiqAssets[0] = ERC20(address(bond));
         uint256[] memory minUnits = new uint256[](1);
         minUnits[0] = 400e6;
-        EarlyExitRedeemer.UnderwriterBid memory bid = _signBid(uwPk, uw, id, 380e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
+        EarlyExitRedeemer.UnderwriterBid memory bid =
+            _signBid(uwPk, uw, id, 380e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
 
         vm.prank(operator);
         redeemer.fillAllCash(id, 250, bid, "");
 
         assertEq(usdc.balanceOf(alice), 975e6, "exiter all cash at 2.5% fee");
         assertEq(bond.balanceOf(uw), 400e6, "underwriter took the illiquid");
-        assertEq(usdc.balanceOf(uw), 1_000e6 - 380e6, "underwriter paid 380 USDC");
+        assertEq(usdc.balanceOf(uw), 1000e6 - 380e6, "underwriter paid 380 USDC");
     }
 
     function test_fillAllCash_reverts_onAccretionViolation() public {
@@ -302,7 +305,7 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         address uw = vm.addr(uwPk);
         vm.prank(admin);
         redeemer.setUnderwriter(uw, true);
-        deal(address(usdc), uw, 1_000e6);
+        deal(address(usdc), uw, 1000e6);
         vm.prank(uw);
         usdc.approve(address(redeemer), type(uint256).max);
 
@@ -312,7 +315,8 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         uint256[] memory minUnits = new uint256[](1);
         minUnits[0] = 400e6;
         // underwriter underpays (300e6) => cashPot 900 < payout ~975 => revert
-        EarlyExitRedeemer.UnderwriterBid memory bid = _signBid(uwPk, uw, id, 300e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
+        EarlyExitRedeemer.UnderwriterBid memory bid =
+            _signBid(uwPk, uw, id, 300e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
 
         vm.prank(operator);
         vm.expectRevert(); // AccretionViolation
@@ -325,7 +329,7 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         address uw = vm.addr(uwPk);
         vm.prank(admin);
         redeemer.setUnderwriter(uw, true);
-        deal(address(usdc), uw, 1_000e6);
+        deal(address(usdc), uw, 1000e6);
 
         uint256 id = _requestAllCash(alice, 1000e6, 500, 0);
         ERC20[] memory illiqAssets = new ERC20[](1);
@@ -333,7 +337,8 @@ contract EarlyExitRedeemerTest is ForkStart, DeployAll {
         uint256[] memory minUnits = new uint256[](1);
         minUnits[0] = 400e6;
         // sign with the WRONG key
-        EarlyExitRedeemer.UnderwriterBid memory bid = _signBid(0xDEAD, uw, id, 380e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
+        EarlyExitRedeemer.UnderwriterBid memory bid =
+            _signBid(0xDEAD, uw, id, 380e6, illiqAssets, minUnits, 0, block.timestamp + 1 hours);
 
         vm.prank(operator);
         vm.expectRevert(); // BadUnderwriterSig

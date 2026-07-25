@@ -152,4 +152,3 @@ contract WithdrawQueueInvariantTest is BaseWithdrawQueueTest {
     }
 
 }
-

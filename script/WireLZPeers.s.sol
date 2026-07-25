@@ -3,9 +3,8 @@ pragma solidity 0.8.21;
 
 import { Script, stdJson } from "@forge-std/Script.sol";
 import { console2 } from "@forge-std/console2.sol";
-import {
-    MultiChainLayerZeroTellerWithMultiAssetSupport
-} from "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
+import { MultiChainLayerZeroTellerWithMultiAssetSupport } from
+    "src/base/Roles/CrossChain/MultiChainLayerZeroTellerWithMultiAssetSupport.sol";
 
 /**
  * @title WireLZPeers

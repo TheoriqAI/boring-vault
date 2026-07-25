@@ -28,6 +28,7 @@ contract OneToOneQueue is ERC721Enumerable, VerboseAuth {
         DEFAULT, // Normal order in queue
         PRE_FILLED, // Order filled out of order, skip on process
         REFUND // Order refunded, skip on process
+
     }
 
     /// @notice Return type of a user's order status in the queue
@@ -451,9 +452,7 @@ contract OneToOneQueue is ERC721Enumerable, VerboseAuth {
         // Since newAmountForReceiver is in offer decimals, we need to calculate the amountWant in want decimals
         Order memory order = Order({
             amountOffer: params.amountOffer.toUint128(),
-            amountWant: _getWantAmountInWantDecimals(
-                newAmountForReceiver.toUint128(), params.offerAsset, params.wantAsset
-            ),
+            amountWant: _getWantAmountInWantDecimals(newAmountForReceiver.toUint128(), params.offerAsset, params.wantAsset),
             offerAsset: params.offerAsset,
             wantAsset: params.wantAsset,
             refundReceiver: params.refundReceiver,
@@ -586,17 +585,15 @@ contract OneToOneQueue is ERC721Enumerable, VerboseAuth {
 
         // Do nothing if using standard ERC20 approve
         if (params.signatureParams.approvalMethod == ApprovalMethod.EIP2612_PERMIT) {
-            try IERC20Permit(address(params.offerAsset))
-                .permit(
-                    depositor,
-                    address(this),
-                    params.amountOffer,
-                    params.signatureParams.deadline,
-                    params.signatureParams.approvalV,
-                    params.signatureParams.approvalR,
-                    params.signatureParams.approvalS
-                ) { }
-            catch {
+            try IERC20Permit(address(params.offerAsset)).permit(
+                depositor,
+                address(this),
+                params.amountOffer,
+                params.signatureParams.deadline,
+                params.signatureParams.approvalV,
+                params.signatureParams.approvalR,
+                params.signatureParams.approvalS
+            ) { } catch {
                 if (params.offerAsset.allowance(depositor, address(this)) < params.amountOffer) {
                     revert PermitFailedAndAllowanceTooLow();
                 }

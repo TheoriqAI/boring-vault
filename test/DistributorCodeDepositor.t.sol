@@ -523,9 +523,8 @@ contract DistributorCodeDepositorWithoutNativeTest is VaultArchitectureSharedSet
         view
         returns (uint8 v, bytes32 r, bytes32 s)
     {
-        bytes32 structHash = keccak256(
-            abi.encode(token.PERMIT_TYPEHASH(), owner, spender, depositAmount, token.nonces(owner), deadline)
-        );
+        bytes32 structHash =
+            keccak256(abi.encode(token.PERMIT_TYPEHASH(), owner, spender, depositAmount, token.nonces(owner), deadline));
         bytes32 digest = keccak256(abi.encodePacked("\x19\x01", token.DOMAIN_SEPARATOR(), structHash));
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(ownerSk, digest);
         return (v, r, s);
