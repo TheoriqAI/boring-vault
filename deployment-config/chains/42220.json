@@ -1,0 +1,19 @@
+{
+  "name": "Celo",
+  "nativeWrapper": "0x471EcE3750Da237f93B8E339c536989b8978a438",
+  "uniswapV3NonFungiblePositionManager": "0x3d79EdAaBC0EaB6F08ED885C05Fc0B014290D95A",
+  "balancerVault": "0xBA12222222228d8Ba445958a75a0704d566BF2C8",
+  "opMessenger": "0x0000000000000000000000000000000000000000",
+  "lzEndpoint": "0x1a44076050125825900e736c501f859c50fE728c",
+  "mailbox": "0x0000000000000000000000000000000000000000",
+  "assetToRateProviderAndPriceFeed": {
+    "NOTE_0_CHAINLINK_1_REDSTONE_2_GENERIC": 0,
+    "NOTE_THESE_KEYS_MUST_NOT_BE_CHECKSUMMED": 0,
+    "maxTimeFromLastUpdate": "86400",
+    "0xaf37e8b6c9ed7f6318979f56fc287d76c30847ff": {
+      "isPegged": true,
+      "rateProvider": "0x0000000000000000000000000000000000000000",
+      "name": "XAUt0"
+    }
+  }
+}
