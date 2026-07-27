@@ -7,7 +7,8 @@ pragma solidity 0.8.21;
 // GenericDecoderAndSanitizer (mainnet/Celo 0x7c70ddb9306f9e2f7a56b6fe7497b7c9ccd5502c). That contract and
 // its exact source are left UNTOUCHED as the live/audited reference. For the NEXT audit, please switch the
 // audited target to THIS FullDecoderAndSanitizer: it is the Generic set PLUS KyberSwap, Odos, Euler (full
-// EVC/EVault + batch) and CowSwap, and it also carries the Pendle on-chain-limit-order sanitization.
+// EVC/EVault + batch), CowSwap, Aave V4 (Hub-and-Spoke) and Morpho Midnight, and it also carries the Pendle
+// on-chain-limit-order sanitization.
 // OKX is INTENTIONALLY EXCLUDED (its router's trailing commission blob defeats a selector-matched decoder).
 // NOT DEPLOYED / NOT WIRED — deploying it requires a decoder redeploy under a new name + merkle-root rebuild.
 // █████████████████████████████████████████████████████████████████████████████████
@@ -44,6 +45,9 @@ import { KyberSwapDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Pro
 import { OdosDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/OdosDecoderAndSanitizer.sol";
 import { EulerDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/EulerDecoderAndSanitizer.sol";
 import { CowSwapDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/CowSwapDecoderAndSanitizer.sol";
+import { AaveV4DecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/AaveV4DecoderAndSanitizer.sol";
+import { MorphoMidnightDecoderAndSanitizer } from
+    "src/base/DecodersAndSanitizers/Protocols/MorphoMidnightDecoderAndSanitizer.sol";
 
 /**
  * @custom:security-contact security@theoriq.ai
@@ -70,7 +74,9 @@ contract FullDecoderAndSanitizer is
     KyberSwapDecoderAndSanitizer,
     OdosDecoderAndSanitizer,
     EulerDecoderAndSanitizer,
-    CowSwapDecoderAndSanitizer
+    CowSwapDecoderAndSanitizer,
+    AaveV4DecoderAndSanitizer,
+    MorphoMidnightDecoderAndSanitizer
 {
 
     constructor(

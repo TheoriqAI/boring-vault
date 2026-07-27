@@ -32,6 +32,11 @@ contract FullDecoderTest is Test {
         // CowSwap (new)
         assertEq(d.setCowswapApproval(TOKEN, 1), abi.encodePacked(TOKEN), "cowswap approval");
         assertEq(d.pullAssets(TOKEN, 1), abi.encodePacked(TOKEN), "cowswap pull");
+        // Aave V4 Spoke (new) — supply(uint256,uint256,address) overloads cleanly beside AaveV3/MorphoBlue
+        assertEq(d.supply(7, 100, RECEIVER), abi.encodePacked(RECEIVER), "aave v4 supply");
+        assertEq(d.setUserPositionManager(TOKEN, true), abi.encodePacked(TOKEN), "aave v4 positionManager");
+        // Morpho Midnight (new)
+        assertEq(d.setIsAuthorized(SPENDER, true, RECEIVER), abi.encodePacked(SPENDER, RECEIVER), "midnight auth");
     }
 
 }
