@@ -28,7 +28,7 @@ import { IMidnight } from "src/interfaces/IMidnight.sol";
  *      guarded by `expectedFlashLoanCaller`, and repay via approve+pull (`forceApprove`) rather than
  *      Balancer's push model.
  * @dev UNAUDITED — intentionally NOT wired into the deploy scripts. Do not use in production until reviewed.
- * @custom:security-contact security@molecularlabs.io
+ * @custom:security-contact security@theoriq.ai
  */
 contract ManagerWithMerkleAndTokenBalanceVerification is ManagerWithMerkleVerification {
 
