@@ -152,4 +152,55 @@ contract MorphoMidnightDecoderTest is Test {
         assertEq(d.withdraw.selector, canonical, "withdraw selector drifted from source ABI");
     }
 
+    // --- LIVE (Base): confirm the deployed Midnight exposes our decoded selectors ---
+    // Address: bgd note — Basescan-verified "Morpho: Midnight" core, chainid 8453 (Midnight is Base-only).
+    // Gated on BASE_RPC_URL (public Base RPC is fine); skips when unset/unreachable.
+
+    address internal constant MIDNIGHT_BASE = 0xAdedD8ab6dE832766Fedf0FaC4992E5C4D3EA18A;
+
+    function testFork_BaseMidnightLiveAndSelectorsPresent() external {
+        string memory rpc = vm.envOr("BASE_RPC_URL", string(""));
+        if (bytes(rpc).length == 0) {
+            emit log("BASE_RPC_URL unset - skipping Base Midnight live check");
+            vm.skip(true);
+            return;
+        }
+        try vm.createSelectFork(rpc) returns (uint256) {
+            _assertBaseMidnight();
+        } catch {
+            emit log("Base RPC unreachable - skipping Base Midnight live check");
+            vm.skip(true);
+        }
+    }
+
+    function _assertBaseMidnight() internal view {
+        bytes memory code = MIDNIGHT_BASE.code;
+        assertGt(code.length, 0, "Midnight has no code on Base");
+
+        // Every action selector our decoder handles must appear in the deployed dispatch table (solc emits
+        // PUSH4 <selector>). A missing one would mean our struct/ABI drifted from the deployed contract.
+        bytes4[8] memory sels = [
+            d.take.selector,
+            d.withdraw.selector,
+            d.repay.selector,
+            d.supplyCollateral.selector,
+            d.withdrawCollateral.selector,
+            d.liquidate.selector,
+            d.setIsAuthorized.selector,
+            d.updatePosition.selector
+        ];
+        for (uint256 i; i < sels.length; ++i) {
+            assertTrue(_codeHasSelector(code, sels[i]), "decoder selector absent from deployed Midnight bytecode");
+        }
+    }
+
+    function _codeHasSelector(bytes memory code, bytes4 sel) internal pure returns (bool) {
+        for (uint256 i; i + 4 <= code.length; ++i) {
+            if (code[i] == sel[0] && code[i + 1] == sel[1] && code[i + 2] == sel[2] && code[i + 3] == sel[3]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
