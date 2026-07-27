@@ -27,6 +27,7 @@ struct CowSwapLimitParams {
  * @dev `hash` reproduces the on-chain order digest (already EIP-712 domain-separated); `packOrderUid`
  *      reproduces the 56-byte uid (`orderDigest[32] ++ owner[20] ++ validTo[4]`). Constants are the live
  *      verified values. `sellToken`/`buyToken` are `address` here (ABI-identical to the canonical `IERC20`).
+ * @custom:security-contact security@theoriq.ai
  */
 library GPv2Order {
 

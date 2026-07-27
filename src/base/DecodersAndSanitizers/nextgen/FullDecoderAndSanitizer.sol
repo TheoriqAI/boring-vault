@@ -45,6 +45,9 @@ import { OdosDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocol
 import { EulerDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/EulerDecoderAndSanitizer.sol";
 import { CowSwapDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/Protocols/CowSwapDecoderAndSanitizer.sol";
 
+/**
+ * @custom:security-contact security@theoriq.ai
+ */
 contract FullDecoderAndSanitizer is
     PendleRouterDecoderAndSanitizer,
     UniswapV3DecoderAndSanitizer,

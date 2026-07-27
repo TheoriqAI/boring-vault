@@ -15,6 +15,7 @@ import { BaseDecoderAndSanitizer, DecoderCustomTypes } from "src/base/DecodersAn
  * @dev The calldata-optimized `swapCompact()`/`swapMultiCompact()` entrypoints use a custom,
  *      non-ABI calldata layout and therefore cannot be sanitized by a selector-matched decoder;
  *      route strategist swaps through `swap`/`swapMulti` instead.
+ * @custom:security-contact security@theoriq.ai
  */
 abstract contract OdosDecoderAndSanitizer is BaseDecoderAndSanitizer {
 

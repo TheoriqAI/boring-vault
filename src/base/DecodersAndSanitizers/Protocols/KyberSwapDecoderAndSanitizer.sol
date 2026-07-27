@@ -14,6 +14,7 @@ import { BaseDecoderAndSanitizer, DecoderCustomTypes } from "src/base/DecodersAn
  *      decoded; it is bounded by the router enforcing `desc.minReturnAmount` is delivered to the
  *      pinned `dstReceiver`. Permit-based swaps are rejected so the vault never signs an approval
  *      inside the router call.
+ * @custom:security-contact security@theoriq.ai
  */
 abstract contract KyberSwapDecoderAndSanitizer is BaseDecoderAndSanitizer {
 

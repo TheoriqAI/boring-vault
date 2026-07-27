@@ -8,6 +8,7 @@ pragma solidity 0.8.21;
  * @dev requestId maps to the epoch id. A request moves through: pending (open epoch) -> claimable
  *      (epoch settled) -> claimed (`deposit`/`mint`). `owner` provides the assets; `controller` owns the
  *      request and its resulting shares; an approved operator may act for a controller.
+ * @custom:security-contact security@theoriq.ai
  */
 interface IERC7540Deposit {
 
