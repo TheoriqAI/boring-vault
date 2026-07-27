@@ -8,7 +8,6 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
     //============================== ERRORS ===============================
 
     error PendleRouterDecoderAndSanitizer__AggregatorSwapsNotPermitted();
-    error PendleRouterDecoderAndSanitizer__LimitOrderSwapsNotPermitted();
 
     //============================== PENDLEROUTER ===============================
 
@@ -70,7 +69,7 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
         addressesFound = abi.encodePacked(user, market);
     }
 
-    // @desc Function to withdraw from Pendle PT tokens, does not support limit orders or aggregator swaps.
+    // @desc Function to withdraw from Pendle PT tokens; reverts on aggregator swaps, on-chain limit orders sanitized.
     // @param receiver:address
     // @param market:address
     // @param tokenOut:address
@@ -86,16 +85,12 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
         virtual
         returns (bytes memory addressesFound)
     {
-        if (limit.limitRouter != address(0)) {
-            revert PendleRouterDecoderAndSanitizer__LimitOrderSwapsNotPermitted();
-        }
-
         if (
             output.swapData.swapType != DecoderCustomTypes.SwapType.NONE || output.swapData.extRouter != address(0)
                 || output.pendleSwap != address(0) || output.tokenOut != output.tokenRedeemSy
         ) revert PendleRouterDecoderAndSanitizer__AggregatorSwapsNotPermitted();
 
-        addressesFound = abi.encodePacked(receiver, market, output.tokenOut);
+        addressesFound = abi.encodePacked(receiver, market, output.tokenOut, _limitOrderAddresses(limit));
     }
 
     // @desc Function to swap exact Pendle Yt for Pendle Pt
@@ -192,7 +187,8 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
         addressesFound = abi.encodePacked(user, sy, output.tokenOut);
     }
 
-    // @desc Function to swap exact token for Pendle Pt, will revert if using aggregator swaps or limit orders
+    // @desc Function to swap exact token for Pendle Pt, will revert if using aggregator swaps (on-chain limit orders
+    // are sanitized, not blocked)
     // @tag receiver:address:The receiver of the Pendle Pt
     // @tag market:address:The pendle market address
     // @tag input:address:The token to swap from
@@ -216,11 +212,7 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
             revert PendleRouterDecoderAndSanitizer__AggregatorSwapsNotPermitted();
         }
 
-        if (limit.limitRouter != address(0)) {
-            revert PendleRouterDecoderAndSanitizer__LimitOrderSwapsNotPermitted();
-        }
-
-        addressFound = abi.encodePacked(receiver, market, input.tokenIn);
+        addressFound = abi.encodePacked(receiver, market, input.tokenIn, _limitOrderAddresses(limit));
     }
 
     // @desc function to claim PENDLE token rewards and interest from LPing
@@ -278,7 +270,7 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
     }
 
     // @desc Function to add liquidity with a single token, does not keep the yt, will revert if using aggregator swaps
-    // or limit orders
+    // (on-chain limit orders are sanitized)
     // @tag receiver:address:The receiver of the Pendle Yt and lp
     // @tag market:address:The pendle market address
     // @tag input:address:The token to add liquidity from
@@ -301,14 +293,11 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
             revert PendleRouterDecoderAndSanitizer__AggregatorSwapsNotPermitted();
         }
 
-        if (limit.limitRouter != address(0)) {
-            revert PendleRouterDecoderAndSanitizer__LimitOrderSwapsNotPermitted();
-        }
-
-        addressesFound = abi.encodePacked(receiver, market, input.tokenIn);
+        addressesFound = abi.encodePacked(receiver, market, input.tokenIn, _limitOrderAddresses(limit));
     }
 
-    // @desc Function to remove liquidity into a single token, will revert if using aggregator swaps or limit orders
+    // @desc Function to remove liquidity into a single token, will revert if using aggregator swaps (on-chain limit
+    // orders are sanitized, not blocked)
     // @tag receiver:address:The receiver of the token to remove liquidity into
     // @tag market:address:The pendle market address
     // @tag output:address:The token to receive after removing liquidity
@@ -331,11 +320,28 @@ abstract contract PendleRouterDecoderAndSanitizer is BaseDecoderAndSanitizer {
             revert PendleRouterDecoderAndSanitizer__AggregatorSwapsNotPermitted();
         }
 
-        if (limit.limitRouter != address(0)) {
-            revert PendleRouterDecoderAndSanitizer__LimitOrderSwapsNotPermitted();
-        }
+        addressFound = abi.encodePacked(receiver, market, output.tokenOut, _limitOrderAddresses(limit));
+    }
 
-        addressFound = abi.encodePacked(receiver, market, output.tokenOut);
+    // @desc Packs the sanitizable addresses of a Pendle on-chain limit order: the limitRouter plus, for every
+    //       fill in normalFills and flashFills, that order's token / YT / maker / receiver. Empty (contributes
+    //       no bytes to the leaf) when no limit order is attached (limitRouter == address(0)), so the merkle
+    //       leaf of a plain swap is unchanged.
+    function _limitOrderAddresses(DecoderCustomTypes.LimitOrderData calldata limit)
+        internal
+        pure
+        returns (bytes memory found)
+    {
+        if (limit.limitRouter == address(0)) return found;
+        found = abi.encodePacked(limit.limitRouter);
+        for (uint256 i; i < limit.normalFills.length; ++i) {
+            DecoderCustomTypes.Order calldata o = limit.normalFills[i].order;
+            found = abi.encodePacked(found, o.token, o.YT, o.maker, o.receiver);
+        }
+        for (uint256 i; i < limit.flashFills.length; ++i) {
+            DecoderCustomTypes.Order calldata o = limit.flashFills[i].order;
+            found = abi.encodePacked(found, o.token, o.YT, o.maker, o.receiver);
+        }
     }
 
     function exitPostExpToToken(
