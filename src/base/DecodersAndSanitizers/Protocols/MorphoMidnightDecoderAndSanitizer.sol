@@ -60,10 +60,13 @@ struct MidnightOffer {
  *      invokes mid-action — an arbitrary-code / reentrancy surface. This decoder PINS every callback address
  *      so the root controls the target, but it does NOT (and cannot) sanitize the callback `data`. Only
  *      whitelist callback targets you fully trust; pin a callback to `address(0)` in the leaf to forbid one.
- * @dev `multicall(bytes[])` is intentionally NOT decoded here: its nested calls cannot be statically
- *      sanitized by a pure decoder, so allowing it would bypass per-action pinning. Batch via individual
- *      merkle-verified manage calls instead. `Offer.callbackData` / `ratifierData` / action `data` are
- *      opaque and unconstrained beyond the pinned callback target.
+ * @dev `multicall(bytes[])` and `flashLoan(...)` are intentionally NOT decoded here. Batching is done
+ *      natively by the manager's merkle-verified batch (multicall's nested calls can't be statically
+ *      sanitized, so decoding it would bypass per-action pinning), and Midnight flash loans are driven by
+ *      the manager's dedicated `midnightFlashLoan` entrypoint (the manager is the initiator and implements
+ *      `onFlashLoan`) — the vault never calls `Midnight.flashLoan` via a manage leaf, so it needs no leaf.
+ *      `Offer.callbackData` / `ratifierData` / action `data` are opaque and unconstrained beyond the pinned
+ *      callback target.
  * @custom:security-contact security@theoriq.ai
  */
 abstract contract MorphoMidnightDecoderAndSanitizer is BaseDecoderAndSanitizer {
@@ -176,26 +179,6 @@ abstract contract MorphoMidnightDecoderAndSanitizer is BaseDecoderAndSanitizer {
         returns (bytes memory addressesFound)
     {
         addressesFound = abi.encodePacked(_marketAddresses(market), onBehalf, receiver);
-    }
-
-    // @desc Multi-token, fee-free Midnight flash loan
-    // @tag callback:address:the flash-loan callback target (pinned; data unsanitized)
-    // @tag tokens:address[]:each flash-loaned token, in order
-    function flashLoan(
-        address[] calldata tokens,
-        uint256[] calldata,
-        address callback,
-        bytes calldata
-    )
-        external
-        pure
-        virtual
-        returns (bytes memory addressesFound)
-    {
-        addressesFound = abi.encodePacked(callback);
-        for (uint256 i; i < tokens.length; ++i) {
-            addressesFound = abi.encodePacked(addressesFound, tokens[i]);
-        }
     }
 
     // @desc Liquidate an unhealthy Midnight borrower

@@ -116,17 +116,6 @@ contract MorphoMidnightDecoderTest is Test {
         );
     }
 
-    function testFlashLoanPinsCallbackThenTokens() external view {
-        address[] memory tokens = new address[](2);
-        tokens[0] = address(0x0F1);
-        tokens[1] = address(0x0F2);
-        uint256[] memory amounts = new uint256[](2);
-        assertEq(
-            d.flashLoan(tokens, amounts, address(0x0CB), ""),
-            abi.encodePacked(address(0x0CB), address(0x0F1), address(0x0F2))
-        );
-    }
-
     function testLiquidatePinsMarketBorrowerReceiverCallback() external view {
         bytes memory got = d.liquidate(_market(), 0, 1, 1, address(0xB0), false, address(0xB1), address(0xB2), "");
         assertEq(got, abi.encodePacked(_marketPacked(), address(0xB0), address(0xB1), address(0xB2)));
@@ -161,10 +150,6 @@ contract MorphoMidnightDecoderTest is Test {
             )
         );
         assertEq(d.withdraw.selector, canonical, "withdraw selector drifted from source ABI");
-    }
-
-    function testFlashLoanSelectorMatchesCanonicalSignature() external view {
-        assertEq(d.flashLoan.selector, bytes4(keccak256("flashLoan(address[],uint256[],address,bytes)")));
     }
 
 }
