@@ -2,6 +2,7 @@
 pragma solidity 0.8.21;
 
 import { ManagerWithMerkleVerification } from "src/base/Roles/ManagerWithMerkleVerification.sol";
+import { BoringVault } from "src/base/BoringVault.sol";
 import { ERC20 } from "@solmate/tokens/ERC20.sol";
 import { SafeTransferLib } from "@solmate/utils/SafeTransferLib.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -84,12 +85,18 @@ contract ManagerWithMerkleAndTokenBalanceVerification is ManagerWithMerkleVerifi
     error ManagerWithMerkleAndTokenBalanceVerification__MidnightFlashLoanInvalidCaller();
     error ManagerWithMerkleAndTokenBalanceVerification__MidnightFlashLoanNotExecuted();
     error ManagerWithMerkleAndTokenBalanceVerification__MidnightFlashLoanInconsistentInput();
+    error ManagerWithMerkleAndTokenBalanceVerification__SupplyMustNotIncrease();
+    error ManagerWithMerkleAndTokenBalanceVerification__SupplyDeltaMismatch(uint256 burned, uint256 expected);
+    error ManagerWithMerkleAndTokenBalanceVerification__ExitSelectorRequired();
+    error ManagerWithMerkleAndTokenBalanceVerification__ExitFromMustBeVault();
+    error ManagerWithMerkleAndTokenBalanceVerification__ExitMustBeBurnOnly();
 
     //============================== EVENTS ===============================
 
     event BoringVaultManagedWithBalanceVerification(TokenDeltaCheck[] deltaChecks);
     event MorphoFlashLoanInitiated(address indexed provider, address indexed token, uint256 assets);
     event MidnightFlashLoanInitiated(address indexed provider, address[] tokens, uint256[] assets);
+    event BoringVaultManagedWithBurn(uint256 sharesBurned);
 
     //============================== CONSTRUCTOR ===============================
 
@@ -140,6 +147,78 @@ contract ManagerWithMerkleAndTokenBalanceVerification is ManagerWithMerkleVerifi
         _checkTokenDeltas(deltaChecks, balancesBefore);
 
         emit BoringVaultManagedWithBalanceVerification(deltaChecks);
+    }
+
+    /**
+     * @notice Executes a SINGLE, BURN-ONLY `BoringVault.exit` — the only operation permitted to reduce
+     *         `totalSupply` (every other entrypoint forbids any supply change). It burns the vault's own
+     *         treasury shares and moves NO asset (`assetAmount` must be 0). For a discounted buyback this is
+     *         the accretion step: burning treasury shares raises NAV/share for remaining holders; the actual
+     *         RWA release (e.g. to redeem with the issuer) is done SEPARATELY via a supply-constant merkle
+     *         leaf (`transfer` / `bulkWithdraw`), so the burn and the asset movement can never be conflated.
+     * @param manageProof merkle proof for the exit leaf.
+     * @param decoderAndSanitizer decoder for the exit call.
+     * @param exitData the ABI-encoded `BoringVault.exit(to, asset, assetAmount, from, shareAmount)` call;
+     *        `assetAmount` MUST be 0 and `from` MUST be the vault.
+     * @dev No token-delta bounds are needed: `assetAmount == 0` means no asset moves, so the only state
+     *      change is the treasury-share burn.
+     * @dev HARD-SCOPED so it cannot lose funds: ONLY `BoringVault.exit`, with `from == address(vault)` (can
+     *      never burn a holder's shares — `exit` burns `from` with no approval) and `assetAmount == 0` (can
+     *      never transfer vault assets out — closes the "burn a dust share, drain the balance" vector, since
+     *      exit's asset and share legs are independent and the leaf never pins the asset amount). Still
+     *      merkle-verified; post-call the supply must have DECREASED by EXACTLY `shareAmount` — it can never
+     *      increase (no mint), and the realized burn must match the intent (catches any unexpected supply
+     *      change). The vault must have granted itself the `exit` capability. Callable by STRATEGIST_ROLE.
+     *      UNAUDITED — a deliberate, tightly-scoped relaxation.
+     */
+    function exitVaultWithMerkleVerification(
+        bytes32[] calldata manageProof,
+        address decoderAndSanitizer,
+        bytes calldata exitData
+    )
+        external
+        requiresAuth
+    {
+        if (isPaused) revert ManagerWithMerkleVerification__Paused();
+
+        // Hard-scope the call (scoped block frees these locals before the rest — avoids stack-too-deep):
+        // must be BoringVault.exit, moving NO asset (burn-only) and burning ONLY the vault's own treasury
+        // shares. exit's asset and share legs are independent, so a non-zero assetAmount could drain the
+        // whole balance for a 1-wei burn; RWA is released via a SEPARATE, supply-constant merkle leaf.
+        uint256 shareAmount;
+        {
+            bytes4 selector;
+            /// @solidity memory-safe-assembly
+            assembly {
+                selector := calldataload(exitData.offset)
+            }
+            if (selector != BoringVault.exit.selector) {
+                revert ManagerWithMerkleAndTokenBalanceVerification__ExitSelectorRequired();
+            }
+            uint256 assetAmount;
+            address from;
+            (,, assetAmount, from, shareAmount) =
+                abi.decode(exitData[4:], (address, address, uint256, address, uint256));
+            if (assetAmount != 0) revert ManagerWithMerkleAndTokenBalanceVerification__ExitMustBeBurnOnly();
+            if (from != address(vault)) revert ManagerWithMerkleAndTokenBalanceVerification__ExitFromMustBeVault();
+        }
+
+        uint256 supplyBefore = vault.totalSupply();
+
+        // Merkle-verify the exit leaf, then execute the single burn-only call.
+        _verifyCallData(manageRoot[msg.sender], manageProof, decoderAndSanitizer, address(vault), 0, exitData);
+        vault.manage(address(vault), exitData, 0);
+
+        // The supply must have decreased by EXACTLY the shares the exit claimed to burn: never increase
+        // (no mint), and the realized burn must equal `shareAmount` (nothing unexpected changed supply).
+        uint256 supplyAfter = vault.totalSupply();
+        if (supplyAfter > supplyBefore) revert ManagerWithMerkleAndTokenBalanceVerification__SupplyMustNotIncrease();
+        uint256 burned = supplyBefore - supplyAfter;
+        if (burned != shareAmount) {
+            revert ManagerWithMerkleAndTokenBalanceVerification__SupplyDeltaMismatch(burned, shareAmount);
+        }
+
+        emit BoringVaultManagedWithBurn(burned);
     }
 
     //============================== MORPHO FLASH LOAN FUNCTIONS ===============================
