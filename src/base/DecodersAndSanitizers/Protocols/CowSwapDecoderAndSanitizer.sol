@@ -11,6 +11,7 @@ import { GPv2Order, CowSwapLimitParams } from "src/interfaces/IGPv2.sol";
  *         checks a pure decoder cannot perform. The module contract is pinned by the merkle leaf `target`.
  * @dev The vault first transfers the sell token to the module via a plain `ERC20.transfer` (sanitized by
  *      BaseDecoderAndSanitizer, which pins the module as recipient), so no extra entry is needed for that.
+ * @custom:security-contact security@theoriq.ai
  */
 abstract contract CowSwapDecoderAndSanitizer is BaseDecoderAndSanitizer {
 

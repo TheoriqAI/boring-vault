@@ -21,6 +21,7 @@ struct BatchItem {
  *      decoder. They ARE handled here when they appear inside a `batch` sub-call. Every account/receiver/
  *      owner that should be the vault is required to equal `boringVault`; the eVault/EVC target itself is
  *      pinned by the merkle leaf.
+ * @custom:security-contact security@theoriq.ai
  */
 abstract contract EulerDecoderAndSanitizer is BaseDecoderAndSanitizer {
 

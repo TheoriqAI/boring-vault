@@ -48,7 +48,7 @@ import { IERC7540Deposit } from "src/interfaces/IERC7540Deposit.sol";
  *      - ERC-7540 allows crediting a `controller != owner` ("gifting"); a griefer can bloat a victim's
  *        `_liveEpochs` and force `AmbiguousClaim` on the `deposit`/`mint` convenience path. The victim is
  *        unharmed (they keep the gifted assets) and always claims via `claim(epoch, ...)`.
- * @custom:security-contact security@molecularlabs.io
+ * @custom:security-contact security@theoriq.ai
  */
 contract EpochDepositor is Auth, ReentrancyGuard, IERC7540Deposit {
 

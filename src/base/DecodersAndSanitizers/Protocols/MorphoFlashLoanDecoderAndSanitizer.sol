@@ -11,6 +11,7 @@ import { BaseDecoderAndSanitizer } from "src/base/DecodersAndSanitizers/BaseDeco
  *         strategist can only flash-loan the authorized token from an authorized Morpho deployment.
  * @dev The `userData` blob is intentionally not decoded here: every strategy call it carries is
  *      re-verified against the merkle root when the callback re-enters `manageVaultWithMerkleVerification`.
+ * @custom:security-contact security@theoriq.ai
  */
 abstract contract MorphoFlashLoanDecoderAndSanitizer is BaseDecoderAndSanitizer {
 

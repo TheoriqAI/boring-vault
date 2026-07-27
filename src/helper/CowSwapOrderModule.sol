@@ -23,7 +23,7 @@ import { IGPv2Settlement, GPv2Order, CowSwapLimitParams } from "src/interfaces/I
  *      (`minAmountOut`/`order.buyAmount`) is the strategist's responsibility — it is NOT oracle-bounded.
  *      This mirrors the 1inch `minReturn` trust model. Add an oracle bound before relying on it against an
  *      untrusted strategist.
- * @custom:security-contact security@molecularlabs.io
+ * @custom:security-contact security@theoriq.ai
  */
 contract CowSwapOrderModule is Auth {
 

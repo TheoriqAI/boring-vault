@@ -10,6 +10,7 @@ pragma solidity 0.8.21;
  * @dev `authData` is opaque to the depositor: a Predicate `Attestation`, an EIP-712 signature, or empty
  *      for list/pause/rate-limit policies. This keeps the (audited) depositor policy-agnostic — swap the
  *      policy to change compliance without touching or re-auditing the core.
+ * @custom:security-contact security@theoriq.ai
  */
 interface IDepositPolicy {
 
