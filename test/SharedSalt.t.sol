@@ -3,7 +3,7 @@ pragma solidity 0.8.21;
 
 import { ICreateX } from "lib/createx/src/ICreateX.sol";
 
-import { ForkTest } from "test/LiveDeploy.t.sol";
+import { VmUsdForkBase } from "test/VmUsdForkBase.sol";
 
 /**
  * @notice Proves the `sharedSalt` property directly against the real mainnet CreateX: a salt whose first 20
@@ -14,7 +14,7 @@ import { ForkTest } from "test/LiveDeploy.t.sol";
  *
  *           forge test --mp test/SharedSalt.t.sol --fork-url $L1_RPC_URL
  */
-contract SharedSaltTest is ForkTest {
+contract SharedSaltTest is VmUsdForkBase {
 
     ICreateX constant CREATEX = ICreateX(0xba5Ed099633D3B313e4D5F7bdc1305d3c28ba5Ed);
     address constant SHARED_SALT_SENTINEL = 0x0000000000000000000000000000000000005A17;
@@ -26,14 +26,21 @@ contract SharedSaltTest is ForkTest {
     address alice = address(0xA11CE);
     address bob = address(0xB0B);
 
+    function setUp() public {
+        // Needs the real mainnet CreateX; skipped by a bare `forge test`. See VmUsdForkBase.
+        _liveFileOrSkip();
+    }
+
     /// @dev Mirrors `BaseScript.makeSalt`: owner(20) ‖ flag(1) ‖ bytes11(keccak256(entropy)).
+    /// @dev Entropy strings here are test-only. The real `vmUSD1:*` sentinel salts are already consumed by
+    ///      the live mainnet deploy, so reusing them would revert `FailedContractCreation`.
     function _salt(address owner, string memory entropy) internal pure returns (bytes32) {
         return bytes32(abi.encodePacked(owner, bytes1(0x00), bytes11(keccak256(abi.encodePacked(entropy)))));
     }
 
     /// @notice THE PROPERTY: a sentinel-prefixed salt is deployer-independent.
     function testSharedSaltGivesTheSameAddressForDifferentDeployers() public {
-        bytes32 salt = _salt(SHARED_SALT_SENTINEL, "vmUSD1:BoringVault");
+        bytes32 salt = _salt(SHARED_SALT_SENTINEL, "SharedSaltTest:shared");
 
         vm.prank(alice);
         address fromAlice = CREATEX.computeCreate3Address(keccak256(abi.encode(salt)));
@@ -51,13 +58,13 @@ contract SharedSaltTest is ForkTest {
     /// @notice A deployer-bound salt (the default) is NOT reusable: different deployers get different
     ///         addresses, and a non-owner cannot use someone else's salt at all.
     function testDeployerBoundSaltIsNotPortable() public {
-        bytes32 aliceSalt = _salt(alice, "vmUSD1:BoringVault");
+        bytes32 aliceSalt = _salt(alice, "SharedSaltTest:bound");
 
         // Alice's salt resolves through the permissioned branch: guardedSalt folds in msg.sender.
         vm.prank(alice);
         address aliceAddr = CREATEX.deployCreate3(aliceSalt, TRIVIAL_INIT_CODE);
 
-        bytes32 bobSalt = _salt(bob, "vmUSD1:BoringVault");
+        bytes32 bobSalt = _salt(bob, "SharedSaltTest:bound");
         vm.prank(bob);
         address bobAddr = CREATEX.deployCreate3(bobSalt, TRIVIAL_INIT_CODE);
 
@@ -74,7 +81,7 @@ contract SharedSaltTest is ForkTest {
     ///         is known, ANY address can claim the slot — including with code of their choosing. This is the
     ///         front-run exposure that the deployer-bound default protects against.
     function testSharedSaltSlotIsClaimableByAnyoneAndThenBurned() public {
-        bytes32 salt = _salt(SHARED_SALT_SENTINEL, "vmUSD1:SomeFutureChainContract");
+        bytes32 salt = _salt(SHARED_SALT_SENTINEL, "SharedSaltTest:squatted");
 
         address squatter = makeAddr("salt squatter");
         vm.prank(squatter);

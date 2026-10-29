@@ -11,7 +11,7 @@ import { WithdrawQueue } from "src/base/Roles/WithdrawQueue.sol";
 import { IERC20 } from "src/interfaces/IFeeModule.sol";
 
 import { DeployAllWithRoleGrants } from "script/deploy/deployAllWithRoleGrants.s.sol";
-import { ForkTest } from "test/LiveDeploy.t.sol";
+import { VmUsdForkBase } from "test/VmUsdForkBase.sol";
 
 /**
  * @notice End-user flows for the `vmUSD` mainnet deploy: a real USDC holder approving, depositing,
@@ -22,7 +22,7 @@ import { ForkTest } from "test/LiveDeploy.t.sol";
  *           LIVE_DEPLOY_READ_FILE_NAME=vmUSD.json \
  *             forge test --mp test/VmUsdUserFlows.t.sol --fork-url $L1_RPC_URL
  */
-contract VmUsdUserFlows is ForkTest, DeployAllWithRoleGrants {
+contract VmUsdUserFlows is VmUsdForkBase, DeployAllWithRoleGrants {
 
     address constant OPERATOR_A = 0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631;
     address constant FINAL_OWNER = 0xCB068924bb3D2Ebb28BD1BB25b09ec15b0D5a03B;
@@ -36,8 +36,8 @@ contract VmUsdUserFlows is ForkTest, DeployAllWithRoleGrants {
     AccountantWithRateProviders accountant;
 
     function setUp() public {
-        string memory file = block.chainid == 31_337 ? "vmUSD.json" : vm.envString("LIVE_DEPLOY_READ_FILE_NAME");
-        if (block.chainid == 31_337) _startFork("L1_RPC_URL");
+        string memory file = _liveFileOrSkip();
+        if (!liveEnvSet) return;
 
         runLiveTestWithRoleGrants(file);
 

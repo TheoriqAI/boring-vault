@@ -16,7 +16,7 @@ import "src/helper/Constants.sol";
 
 import { DeployAllWithRoleGrants } from "script/deploy/deployAllWithRoleGrants.s.sol";
 import { IAuthority } from "script/ConfigReader.s.sol";
-import { ForkTest } from "test/LiveDeploy.t.sol";
+import { VmUsdForkBase } from "test/VmUsdForkBase.sol";
 
 /**
  * @notice Fork test for the `vmUSD` mainnet deploy: proves that after `deployAllWithRoleGrants`
@@ -26,7 +26,7 @@ import { ForkTest } from "test/LiveDeploy.t.sol";
  *           LIVE_DEPLOY_READ_FILE_NAME=vmUSD.json \
  *             forge test --mp test/VmUsdRolesAndOwnership.t.sol --fork-url $L1_RPC_URL
  */
-contract VmUsdRolesAndOwnership is ForkTest, DeployAllWithRoleGrants {
+contract VmUsdRolesAndOwnership is VmUsdForkBase, DeployAllWithRoleGrants {
 
     address constant OPERATOR_A = 0xA072f8Bd3847E21C8EdaAf38D7425631a2A63631;
     address constant OPERATOR_B = 0xCB068924bb3D2Ebb28BD1BB25b09ec15b0D5a03B;
@@ -46,8 +46,8 @@ contract VmUsdRolesAndOwnership is ForkTest, DeployAllWithRoleGrants {
     WithdrawQueue withdrawQueue;
 
     function setUp() public {
-        string memory file = block.chainid == 31_337 ? "vmUSD.json" : vm.envString("LIVE_DEPLOY_READ_FILE_NAME");
-        if (block.chainid == 31_337) _startFork("L1_RPC_URL");
+        string memory file = _liveFileOrSkip();
+        if (!liveEnvSet) return;
 
         runLiveTestWithRoleGrants(file);
 

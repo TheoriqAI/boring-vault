@@ -108,6 +108,22 @@ can repoint them whenever.
 - `test/VmUsdUserFlows.t.sol` — mainnet-fork test of the end-user deposit/redeem paths
 - `test/VmUsdSafeRecipient.t.sol` — mainnet-fork test: real Safes depositing and redeeming to themselves
 - `test/SharedSalt.t.sol` — mainnet-fork test of the CreateX shared-salt property and its front-run exposure
+- `test/VmUsdForkBase.sol` — fork harness; gates the suites on `LIVE_DEPLOY_READ_FILE_NAME`
+- `deployment-config/vmUSD-test.json` — the config the suites deploy (entropy `vmUSD1t`, `sharedSalt: false`)
+
+**Running the test suites after the mainnet deploy**
+
+The production salts (`vmUSD1:*`) are consumed on mainnet, so re-running the deploy against latest state
+reverts `FailedContractCreation`. The suites therefore target `vmUSD-test.json`, whose entropy is unused:
+
+```bash
+LIVE_DEPLOY_READ_FILE_NAME=vmUSD-test.json forge test --match-path "test/VmUsd*.t.sol"
+LIVE_DEPLOY_READ_FILE_NAME=vmUSD-test.json forge test --match-path "test/SharedSalt.t.sol"
+```
+
+With the env var unset — a bare `forge test`, i.e. the `pre-push` hook — all four suites `vm.skip`, matching
+the `XautCrossChainWiring.t.sol` precedent. To replay the exact production config instead, pin a pre-deploy
+block: `FORK_BLOCK=26292872 LIVE_DEPLOY_READ_FILE_NAME=vmUSD.json …` — that needs an archive RPC.
 - `script/deploy-vmUSD.sh` — the driver (test / dry / simulate / broadcast)
 - `script/verify-vmUSD.sh` — Etherscan verification with the exact per-contract constructor args
 
@@ -242,10 +258,10 @@ confirm them against `out-vmUSD.json` after broadcast. Replace `0x1111…1111` w
 | # | From | Target | Call |
 |---|---|---|---|
 | 1 | depositor | USDC `0xA0b8…eB48` | `approve(boringVault, 100000000)` |
-| 2 | depositor | teller `0xdfa7…ab0f` | `deposit(USDC, 100000000, 0)` → returns 100000000 shares |
-| 3 | depositor | boringVault `0x43e1…c2e6` | `approve(withdrawQueue, 100000000)` |
-| 4 | depositor | queue `0xa2f9…a902` | `submitOrder((100000000, USDC, you, you, you, (0,0,0x0,0x0,false,0,0x)))` |
-| 5 | **operator** | queue `0xa2f9…a902` | `processOrders(1)` |
+| 2 | depositor | teller `0x0188…67FB` | `deposit(USDC, 100000000, 0)` → returns 100000000 shares |
+| 3 | depositor | boringVault `0xC9f0…0D2A` | `approve(withdrawQueue, 100000000)` |
+| 4 | depositor | queue `0x9F3A…F9A2` | `submitOrder((100000000, USDC, you, you, you, (0,0,0x0,0x0,false,0,0x)))` |
+| 5 | **operator** | queue `0x9F3A…F9A2` | `processOrders(1)` |
 
 > ⚠️ Call 1 approves the **BoringVault**, not the teller — `teller.deposit` pulls the asset via
 > `vault.enter`. Approving the teller is the most common way to get a failing deposit.
@@ -256,7 +272,7 @@ Encoded payloads (verified byte-for-byte by `testExactMainnetSequenceFor100Usdc`
 ```
 # 1  USDC.approve(boringVault, 100e6)
 0x095ea7b3
-  00000000000000000000000043e1d6430b5b040b338e84405134619f2b96c2e6
+  000000000000000000000000c9f0a071d3d6f6ab72d26e837380cb4fc2e00d2a
   0000000000000000000000000000000000000000000000000000000005f5e100
 
 # 2  teller.deposit(USDC, 100e6, 0)
@@ -267,7 +283,7 @@ Encoded payloads (verified byte-for-byte by `testExactMainnetSequenceFor100Usdc`
 
 # 3  boringVault.approve(withdrawQueue, 100e6 shares)
 0x095ea7b3
-  000000000000000000000000a2f9da2aa8ff096cef7ae418a565065cc096a902
+  0000000000000000000000009f3a55c2707d8131cb0dda47be982cb02dd7f9a2
   0000000000000000000000000000000000000000000000000000000005f5e100
 
 # 4  withdrawQueue.submitOrder(...)   <- 0x1111…1111 is YOUR address, 3x
@@ -373,15 +389,15 @@ owner/role powers would be unaffected).
 
 | Contract | Address |
 |---|---|
-| BoringVault | `0x43e1d6430b5b040b338e84405134619f2b96c2e6` |
-| FreezeListBeforeTransferHook | `0x48905f681631da14c5c5fd34cf341a6d0f709a92` |
-| ManagerWithMerkleVerification | `0xd16c82722171c541f7b605d09cdcba93dd8a8447` |
-| AccountantWithRateProviders | `0x826e67108d8f6d404dbedcc7baf9f7e5753299bf` |
-| Teller (LZ multichain) | `0xdfa77933f55c70b03fc3720e81192d09001aab0f` |
-| RolesAuthority | `0x995d6439610a3fe4fcc7a84f3757ff533828f138` |
-| WithdrawQueueAssetSpecificFeeModule | `0x268C7F603765eb689feB1f9bC3a7fF9e2B3F94EB` |
-| WithdrawQueue | `0xa2f9da2aa8ff096cef7ae418a565065cc096a902` |
-| GenericDecoderAndSanitizer | `0x4c797bbfbfaba445b32394ebf2b56312fb4f195b` |
+| BoringVault | `0xC9f0A071D3d6F6Ab72d26E837380cb4fC2E00D2A` |
+| FreezeListBeforeTransferHook | `0x24f40C51c65CB8e5EF57720BA556bF574A55cf42` |
+| ManagerWithMerkleVerification | `0x792A1FBdDC4893FcCDC4c4099C72003c08Cc3E8d` |
+| AccountantWithRateProviders | `0x2267D1Bbf617Ad55f1DE774701773c1b1F9Ee6C7` |
+| Teller (LZ multichain) | `0x01882178f0607913aA33Ec83135A83B2643a67FB` |
+| RolesAuthority | `0xF3Af136801114d3541c73421Cdd177dF4f840B18` |
+| WithdrawQueueAssetSpecificFeeModule | `0x79815b7De8B006755A7fCbbAF46e636cFdcD33dc` |
+| WithdrawQueue | `0x9F3A55c2707D8131Cb0dda47BE982Cb02DD7F9A2` |
+| GenericDecoderAndSanitizer | `0x62EA52EA99418c8A47003F50E895B53BAaE09d3b` |
 
 ---
 
