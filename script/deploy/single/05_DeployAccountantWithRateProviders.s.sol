@@ -61,9 +61,7 @@ contract DeployAccountantWithRateProviders is BaseScript {
         }
 
         {
-            bytes32 accountantSalt = makeSalt(
-                broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":AccountantWithRateProviders"))
-            );
+            bytes32 accountantSalt = makeConfigSalt(config, ":AccountantWithRateProviders");
             accountant = AccountantWithRateProviders(CREATEX.deployCreate3(accountantSalt, initCode));
         }
 
