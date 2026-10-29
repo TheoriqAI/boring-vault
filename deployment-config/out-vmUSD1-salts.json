@@ -1,0 +1,17 @@
+{
+  "nameEntropy": "vmUSD1",
+  "sharedSalt": true,
+  "saltOwner": "0x0000000000000000000000000000000000005a17",
+  "note": "Deployer-independent (CreateX SenderBytes.Random): any deployer reproduces these addresses on any chain. Also means anyone who has these salts can claim the addresses -- verify bytecode on every chain.",
+  "salts": {
+    "BoringVault": { "entropy": "vmUSD1:BoringVault", "salt": "0x0000000000000000000000000000000000005a1700e423a93014093f8b6eb281" },
+    "FreezeListBeforeTransferHook": { "entropy": "vmUSD1:FreezeListBeforeTransferHook", "salt": "0x0000000000000000000000000000000000005a170058b1c2eda56414a1773285" },
+    "ManagerWithMerkleVerification": { "entropy": "vmUSD1:ManagerWithMerkleVerification", "salt": "0x0000000000000000000000000000000000005a170061fa0722384b85f73e148d" },
+    "AccountantWithRateProviders": { "entropy": "vmUSD1:AccountantWithRateProviders", "salt": "0x0000000000000000000000000000000000005a1700b6c07d6b2b6837ee44f64d" },
+    "MultiChainLayerZeroTellerWithMultiAssetSupport": { "entropy": "vmUSD1:MultiChainLayerZeroTellerWithMultiAssetSupport", "salt": "0x0000000000000000000000000000000000005a1700b87ced186848401b6d5876" },
+    "RolesAuthority": { "entropy": "vmUSD1:RolesAuthority", "salt": "0x0000000000000000000000000000000000005a17006afaa32d1eb7e547b00e3d" },
+    "WithdrawQueueAssetSpecificFeeModule": { "entropy": "vmUSD1:WithdrawQueueAssetSpecificFeeModule", "salt": "0x0000000000000000000000000000000000005a1700f165ba521e01bb94ef2d58" },
+    "WithdrawQueue": { "entropy": "vmUSD1:WithdrawQueue", "salt": "0x0000000000000000000000000000000000005a17007c062f2d2676c377ff62a5" },
+    "GenericDecoderAndSanitizer": { "entropy": "vmUSD1:GenericDecoderAndSanitizer", "salt": "0x0000000000000000000000000000000000005a17001f0e9ed4108252e79ad01d" }
+  }
+}

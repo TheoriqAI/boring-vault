@@ -17,6 +17,9 @@ library ConfigReader {
 
     struct Config {
         string nameEntropy;
+        // When true, salts are built from a fixed sentinel instead of the deployer, so ANY deployer can
+        // reproduce the same addresses on any chain. Defaults to false = CreateX permissioned protection.
+        bool sharedSalt;
         address protocolAdmin;
         address base;
         uint8 boringVaultAndBaseDecimals;
@@ -85,6 +88,8 @@ library ConfigReader {
     function toConfig(string memory _config, string memory _chainConfig) internal view returns (Config memory config) {
         // Reading the 'nameEntropy`
         config.nameEntropy = _config.readString(".nameEntropy");
+        // Optional: absent in every pre-existing config, which keeps the deployer-bound salt behaviour.
+        config.sharedSalt = _config.readBoolOr(".sharedSalt", false);
 
         // Reading the 'protocolAdmin'
         config.protocolAdmin = _config.readAddress(".protocolAdmin");

@@ -28,6 +28,14 @@ abstract contract BaseScript is Script {
     /// @dev Needed for the deterministic deployments.
     bytes32 internal constant ZERO_SALT = bytes32(0);
 
+    /**
+     * @dev Stand-in for the deployer in the first 20 bytes of a salt when a deployment opts into
+     *      `sharedSalt`. Must be a nonzero address that no deployer will ever be, because CreateX branches
+     *      on `bytes20(salt) == msg.sender` and on `== address(0)`; anything else takes the deployer-agnostic
+     *      `SenderBytes.Random` path. `0x...5A17` is "SALT" in leetspeak — a recognisable marker in calldata.
+     */
+    address internal constant SHARED_SALT_SENTINEL = 0x0000000000000000000000000000000000005A17;
+
     /// @dev The address of the transaction broadcaster.
     address internal broadcaster;
 
@@ -140,6 +148,30 @@ abstract contract BaseScript is Script {
         } else {
             revert("Base Script getMultisig: bad chain id");
         }
+    }
+
+    /**
+     * @notice Builds the CreateX salt for one contract of a deployment, honouring `config.sharedSalt`.
+     * @dev    `sharedSalt == false` (the default, and what every pre-existing config resolves to) puts the
+     *         DEPLOYER in the salt's first 20 bytes. CreateX then classifies it as `SenderBytes.MsgSender`
+     *         and folds `msg.sender` into the guarded salt, so the salt is usable by that deployer ONLY
+     *         ("permissioned deploy protection") and the resulting address depends on the deployer.
+     *
+     *         `sharedSalt == true` substitutes `SHARED_SALT_SENTINEL`. Because those 20 bytes match neither
+     *         `msg.sender` nor the zero address, CreateX takes the `SenderBytes.Random` branch and the
+     *         guarded salt becomes `keccak256(abi.encode(salt))` — **no `msg.sender`**. The address is then a
+     *         function of the salt alone, so ANY deployer reproduces it on ANY chain.
+     *
+     *         ⚠️ That is a real trade-off, not a free win: a deployer-independent salt is also a
+     *         deployer-independent *claim*. Once the salt is public (it is visible in the first chain's
+     *         deploy calldata), anyone can occupy the remaining chains' addresses with code of their
+     *         choosing. Only opt in when the cross-deployer property is worth more than front-run
+     *         resistance, and verify the deployed bytecode on every subsequent chain.
+     * @param  suffix The per-contract discriminator, e.g. `":WithdrawQueue"`.
+     */
+    function makeConfigSalt(ConfigReader.Config memory config, string memory suffix) internal view returns (bytes32) {
+        address saltOwner = config.sharedSalt ? SHARED_SALT_SENTINEL : broadcaster;
+        return makeSalt(saltOwner, false, string(abi.encodePacked(config.nameEntropy, suffix)));
     }
 
     function makeSalt(

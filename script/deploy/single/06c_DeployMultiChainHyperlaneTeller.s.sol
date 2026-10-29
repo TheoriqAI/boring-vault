@@ -22,11 +22,7 @@ contract DeployMultiChainHyperlaneTeller is BaseScript {
         // Require config Values
         require(config.boringVault.code.length != 0, "boringVault must have code");
         require(config.accountant.code.length != 0, "accountant must have code");
-        bytes32 tellerSalt = makeSalt(
-            broadcaster,
-            false,
-            string(abi.encodePacked(config.nameEntropy, ":MultiChainHyperlaneTellerWithMultiAssetSupport"))
-        );
+        bytes32 tellerSalt = makeConfigSalt(config, ":MultiChainHyperlaneTellerWithMultiAssetSupport");
         require(config.boringVault != address(0), "boringVault");
         require(config.accountant != address(0), "accountant");
 

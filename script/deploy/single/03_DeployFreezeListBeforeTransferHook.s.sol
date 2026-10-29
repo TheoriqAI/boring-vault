@@ -25,9 +25,7 @@ contract DeployFreezeListBeforeTransferHookScript is BaseScript {
         // a new chain.
         if (config.beforeTransferHookAddress == address(0)) {
             console.log("03_DeployFreezeListBeforeTransferHook: NO HOOK PROVIDED: Deploying new hook...");
-            bytes32 freezeListBeforeTransferHookSalt = makeSalt(
-                broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":FreezeListBeforeTransferHook"))
-            );
+            bytes32 freezeListBeforeTransferHookSalt = makeConfigSalt(config, ":FreezeListBeforeTransferHook");
 
             // Create Contract
             bytes memory creationCode = type(FreezeListBeforeTransferHook).creationCode;

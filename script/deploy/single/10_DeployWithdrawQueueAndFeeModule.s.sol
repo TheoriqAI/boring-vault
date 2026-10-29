@@ -41,9 +41,7 @@ contract DeployWithdrawQueueAndFeeModule is BaseScript {
         address feeModule;
         {
             // Deploy the Fee Module
-            bytes32 feeModuleSalt = makeSalt(
-                broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":WithdrawQueueAssetSpecificFeeModule"))
-            );
+            bytes32 feeModuleSalt = makeConfigSalt(config, ":WithdrawQueueAssetSpecificFeeModule");
             bytes memory feeModuleCreationCode = type(WithdrawQueueAssetSpecificFeeModule).creationCode;
             // Deploy with `broadcaster` as the temporary owner so this script can configure per-asset
             // fees via `setFeeData` (which is `requiresAuth`). Ownership is transferred to
@@ -76,8 +74,7 @@ contract DeployWithdrawQueueAndFeeModule is BaseScript {
         // Deploy the Withdraw Queue (scoped so its locals free up before the RolesAuthority section below).
         address withdrawQueue;
         {
-            bytes32 withdrawQueueSalt =
-                makeSalt(broadcaster, false, string(abi.encodePacked(config.nameEntropy, ":WithdrawQueue")));
+            bytes32 withdrawQueueSalt = makeConfigSalt(config, ":WithdrawQueue");
             // recoveryAddress (last arg) = protocolAdmin (owner). Shares from failed refunds go here. Previously
             // omitted — the constructor then read the name-length word as a garbage non-zero recoveryAddress.
             bytes memory args = abi.encode(

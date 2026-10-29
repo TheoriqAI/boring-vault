@@ -1,0 +1,10 @@
+{
+  "boringVault": "0xc9f0a071d3d6f6ab72d26e837380cb4fc2e00d2a",
+  "manager": "0x792a1fbddc4893fccdc4c4099c72003c08cc3e8d",
+  "accountant": "0x2267d1bbf617ad55f1de774701773c1b1f9ee6c7",
+  "teller": "0x01882178f0607913aa33ec83135a83b2643a67fb",
+  "rolesAuthority": "0xf3af136801114d3541c73421cdd177df4f840b18",
+  "freezeListBeforeTransferHook": "0x24f40c51c65cb8e5ef57720ba556bf574a55cf42",
+  "genericDecoderAndSanitizer": "0x62ea52ea99418c8a47003f50e895b53baae09d3b",
+  "withdrawQueue": "0x9f3a55c2707d8131cb0dda47be982cb02dd7f9a2"
+}
